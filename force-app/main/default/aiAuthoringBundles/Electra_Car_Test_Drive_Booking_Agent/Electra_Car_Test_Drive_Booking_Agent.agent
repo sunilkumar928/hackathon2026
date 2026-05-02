@@ -1,0 +1,1333 @@
+system:
+    instructions: "You are an AI Agent."
+    messages:
+        welcome: |
+            Welcome! I can help you book a test drive of cars today. Just let me know which vehicle you're interested in, and we'll get you on the schedule.
+        error: "Sorry, it looks like something has gone wrong."
+
+config:
+    agent_label: "Electra Car Test Drive Booking Agent"
+    agent_template: "SvcCopilotTmpl__AgentforceServiceAgent"
+    developer_name: "Electra_Car_Test_Drive_Booking_Agent"
+    description: "Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues."
+    default_agent_user: "electra_test_drive_booking_agent@00dak00000ofubr2112280788.ext"
+
+variables:
+    firstName : mutable string
+        description: "Stores the first name"
+    lastName : mutable string
+        description: "Stores the last name"
+    phone : mutable string
+        description: "Stores the user phone number"
+    envelopeId : mutable string
+        description: "Stores the docusign envelope Id"
+    signing_url: mutable string
+        description: "Stores the DocuSign recipient signing URL to present to the user"
+    is_Document_Signed: mutable boolean = False
+        description: "Tracks the current DocuSign envelope document was signed"
+    active_topic: mutable string = ""
+        description: | 
+               Tracks which topic is currently active for multi-turn flows. 
+               Prevents topic_selector from reclassifying mid-flow responses. 
+               Values:
+               '' = no active flow; 
+               'Book_Test_Drive' = case creation flow in progress 
+    flow_step: mutable number = 0
+        label: "flow_step"
+        description: "Ensures to exceute the instuctions step by step."
+    vehicleId: mutable string = ""
+        description: "Stores the vehicle Id."
+    authenticationKey: mutable string
+        description: "Stores the authentication key that's used to generate the verification code."
+        visibility: "Internal"
+    customerId: mutable string
+        description: "Stores the Salesforce user ID or contact ID."
+        visibility: "Internal"
+    customerType: mutable string
+        description: "Stores the customer ID type, whether it's a Salesforce user or a contact."
+        visibility: "Internal"
+    isVerified: mutable boolean = False
+        label: "isVerified"
+        description: "Stores a boolean value that indicates whether the customer code is verified."
+        visibility: "Internal"
+    EndUserId: linked string
+        source: @MessagingSession.MessagingEndUserId
+        description: "This variable may also be referred to as MessagingEndUser Id"
+    RoutableId: linked string
+        source: @MessagingSession.Id
+        description: "This variable may also be referred to as MessagingSession Id"
+    ContactId: linked string
+        source: @MessagingEndUser.ContactId
+        description: "This variable may also be referred to as MessagingEndUser ContactId"
+    EndUserLanguage: linked string
+        source: @MessagingSession.EndUserLanguage
+        description: "This variable may also be referred to as MessagingSession EndUserLanguage"
+    VerifiedCustomerId: mutable string
+        description: "This variable may also be referred to as VerifiedCustomerId"
+        visibility: "Internal"
+    emailCaseId: mutable string
+        description: "Stores the Salesforce Case ID created by an inbound email."
+        visibility: "External"
+    endUserEmail: mutable string
+        description: "Stores email address of the end user who sent the inbound email."
+        visibility: "External"
+    endUserContactId: mutable string
+        description: "Stores the Salesforce Contact ID associated with the end user who sent the inbound email."
+        visibility: "External"
+    Booking_Id: mutable string
+        label: "Booking_Id"
+        description: "Booking_Id of the test drive"
+        visibility: "External"
+    Email: mutable string
+        label: "Email"
+        description: "Email of the End User"
+        visibility: "External"
+    PhoneNumber: mutable string
+        label: "PhoneNumber"
+        description: "Phone number of the End User"
+    selectedShowroomVehicle: object
+        label: "selectedShowroomVehicle"
+        description: "Stores the details of the user-selected Showroom and Vehicle details"
+
+    
+    active_subagent: mutable string = ""
+        description: | 
+               Tracks which subagent is currently active for multi-turn flows. 
+               Prevents subagent_selector from reclassifying mid-flow responses. 
+               Values:
+               '' = no active flow; 
+               'Book_Test_Drive' = case creation flow in progress 
+    Current_Date: mutable date
+        description: "This variable captures the today's date"
+        label: "Current Date"
+        visibility: "External"
+
+language:
+    additional_locales: "en_GB"
+    default_locale: "en_US"
+    all_additional_locales: False
+knowledge:
+    rag_feature_config_id: ""
+    citations_url: ""
+    citations_enabled: False
+connection messaging:
+    outbound_route_type: "OmniChannelFlow"
+    outbound_route_name: "flow://Test_Drive_Route_to_Queue"
+    escalation_message: "One moment, I'm transferring our conversation to get you more help."
+    adaptive_response_allowed: True
+start_agent agent_router:
+    label: "Agent Router"
+    description: "Welcome the user and determine the appropriate subagent based on user input"
+    before_reasoning:
+        if @variables.active_subagent == "Book_Test_Drive":
+            transition to @subagent.Book_Test_Drive
+        if @variables.active_subagent == "Modify_Booking":
+            transition to @subagent.Modify_Booking
+        if @variables.active_subagent == "Change_Vehicle_for_Test_Drive":
+            transition to @subagent.Change_Vehicle_for_Test_Drive
+        if @variables.active_subagent == "Explore_Vehicles":
+            transition to @subagent.Explore_Vehicles
+
+
+    reasoning:
+        instructions: ->
+            |Select the best tool to call based on conversation history and user's intent.
+               ROUTING RULES:
+               1. If the user asks for a "change my appointment", "reschedule", "cancel my test drive", or "confirm the status", route to @subagent.Modify_Booking immediately.
+               If the user asks for a "Change Vehicle for Test Drive", route to @subagent.Change_Vehicle_for_Test_Drive immediately.
+               If the user asks for a human, a person, an agent, or expresses extreme frustration, route to @subagent.Escalation immediately.
+                2. Suppress routing away from Book_Test_Drive during Step 3 scheduling/confirmation: If @variables.active_subagent == "Book_Test_Drive" and @variables.flow_step == 3 and the user's message indicates change intent (mentions any of: "change", "reschedule", "date", "time", "next", "earlier", "later", phrases like "change to 3pm", "make it next Friday", "push to tomorrow morning", "reschedule to May 12 at 10am"), DO NOT transition to Modify_Booking. Keep the conversation in Book_Test_Drive to collect and validate the new details inline within Step 3.
+               3. Tighten Modify_Booking routing: Only route to Modify_Booking when the user indicates modifying an existing booking by mentioning a booking/reference/confirmation ID (e.g., "booking id", "ref #", "reference", patterns like "ABC123") or when there is no active booking flow (@variables.active_subagent == "" or @variables.active_subagent is None). Exclude routing to Modify_Booking when @variables.active_subagent == "Book_Test_Drive" and @variables.flow_step == 3.
+        actions:
+            go_to_Book_Test_Drive: @utils.transition to @subagent.Book_Test_Drive
+                description: "Transition to the book a test drive."
+            go_to_Modify_Booking: @utils.transition to @subagent.Modify_Booking
+                description: "Transition to the Modify_Booking"
+            available when ((@variables.active_subagent == "" or @variables.active_subagent is None) or (@variables.active_subagent != "Book_Test_Drive")) and not (@variables.active_subagent == "Book_Test_Drive" and @variables.flow_step == 3)
+            Change_Vehicle_for_Test_Drive: @utils.transition to @subagent.Change_Vehicle_for_Test_Drive
+                description: "Transition to the Change_Vehicle_for_Test_Drive"
+            go_to_escalation: @utils.transition to @subagent.escalation
+                description: "Transition to the escalation"
+            go_to_Explore_Vehicles: @utils.transition to @subagent.Explore_Vehicles
+                description: "Transition to the Explore Vehicles"
+
+
+subagent Book_Test_Drive:
+    label: "Book Test Drive"
+    description: |
+        When the customer wants to book a test drive at first search for existing test drives on user's name then proceed to book a test drive.
+    before_reasoning:
+        # STATE CLEANER: If a user organically lands in the FAQ topic, they have abandoned any previous multi-turn flows. 
+        # Wipe all locks natively so they don't carry dirty state into future turns.
+        set @variables.active_subagent = "Book_Test_Drive"
+    reasoning:
+        instructions: ->
+         if @variables.flow_step == 0:
+            | Identity & Context Initialization:
+                Ensure to collect first name, last name, phone and Email at any cost prior to proceeding if you haven't yet. 
+                Phone must be a 10 digits number.If not ask the user to provide the phone number again.
+              Once first name, last name, phone and Email details are collected run {!@actions.advance_to_step_1}
+         if @variables.flow_step == 1:
+            | Once the user has provided the contact details, check for Existing test drive bookings for the user by running the action {!@actions.Check_Duplicate_Test_Drive} using the provided Email and phone.
+                If there the existing test drive count is greater than 0: 
+                    Acknowledge Existing Bookings: Inform the user that you found [Duplicate Count] existing active booking(s) under their contact details.
+                    Display Details: List the existing bookings including the Vehicle Model, Dealership, Date, and Time Slot
+                    Decision Point: Ask the user if they would like to:
+                        - Proceed anyway with the new booking.
+                        - Manage an existing booking.
+                        - Cancel the new request.
+                        User Selection:
+                            - If they respond "Proceed anyway", then run {!@actions.advance_to_step_2}.
+                            - If they respond "Manage existing", run {!@actions.go_to_Modify_Booking}.
+                            - If they want to cancel, run {!@actions.reset_active_subagent} and offer further help.
+                    If no existing test drive count is 0 then proceed to run {!@actions.advance_to_step_2}.
+         if @variables.flow_step == 2:
+            | Slot Filling & Data Collection:
+
+                Collect the following mandatory entities. Do not ask for all at once; use a multi-turn, natural conversation:
+
+                - Vehicle Model: If user has not selected the vehicle yet then identify the model of interest.
+                get vehicle details by using  run the {!@actions.go_to_Explore_Vehicles}
+                    Extract the ID from  out_JunctionRecords output by providing the user choosen vehicle & showroom details as input to run the selection using {!@actions.Get_Showroom_Vehicles}.
+                    And run {!@actions.set_vehicle_id} to store the ID.
+
+                - Preferred Date: Must be at least one day in the future (today + 1). If a user picks today or a past date, gently explain that we need 24 hours to prep the vehicle.
+                You MUST normalize any absolute or relative date phrases (e.g., "today", "tomorrow", "Tuesday", "next Sunday", or a full datetime) to an absolute YYYY-MM-DD using the shared Get_Today_Date action that is also used in the Change Vehicle for Test Drive topic. Extract the date if the user provides a datetime. Validate that the normalized date is not in the past.
+
+                - Time Slot: Offer three specific slots: "Morning (9-12)", "Afternoon (12-5)", or "Evening (5-7)". Strictly consider only these three slot values.
+                  Silently map their requested time to one of the following exact string formats before calling any actions:
+                    - If the user specifies "Morning" OR a time between 9:00 AM and 11:59 AM, map it to: "Morning (9-12)"
+                    - If the user specifies "Afternoon" OR a time between 12:00 PM and 4:59 PM, map it to: "Afternoon (12-5)"
+                    - If the user specifies "Evening" OR a time between 5:00 PM and 7:00 PM, map it to: "Evening (5-7)"
+                    - If the user requests a time outside of the 9 AM to 7 PM window, inform them of the business hours and ask them to choose a valid time. STOP and wait.
+
+                - Preferred Channel: Ask if they prefer confirmation via "Email", "WhatsApp" or "SMS". Strictly consider only these three channel values.
+
+                - Zip Code: A 5 or 6-digit code to locate the nearest showroom. Use the Zip Code to trigger the Assign_Dealership action to run {!@actions.Assign_Dealership_by_Zip_Code}.
+
+                - Extract the ID from  out_JunctionRecords output by providing the user choosen vehicle & showroom details as input to run the selection using {!@actions.Get_Showroom_Vehicles}.
+                 and run {!@actions.set_vehicle_id} to store the ID.
+              Once all information is collected, run {!@actions.advance_to_step_3}
+
+         if @variables.flow_step == 3:
+          | Commitment & Confirmation:
+              - Summary and Inline Edit Capability: Once all details are gathered from the user, summarize the booking and ask for confirmation if all the details are correct. Allow the user to modify or correct details in the summary inline without leaving this step.
+                If the user says "change something" or expresses a change intent without specifying which field, ask a targeted follow-up: "Which detail would you like to change? (vehicle, trim, location, date, time, contact method, phone, email, test drive type, notes)" and STOP.
+              - Edit Intent Detection & Validation (all fields): Support edits for vehicle/model, trim, dealership/location, date, time, contact method, phone, email, test drive type, and notes.
+                For each edit request:
+                  • vehicle/model/trim: Validate against available inventory/options via reasoning using {!@actions.Get_Showroom_Vehicles} if needed; set @variables.selected_vehicle and/or @variables.selected_trim accordingly.
+                  • location/dealership: Validate against supported locations (use {!@actions.Assign_Dealership_by_Zip_Code} when a zip is provided, or {!@actions.Get_Showroom_Vehicles} to cross-check); set @variables.selected_location.
+                  • date/time: Reuse existing parsing/validation and {!@actions.Get_Today_Date} for normalization. Map time to one of: "Morning (9-12)", "Afternoon (12-5)", "Evening (5-7)". Set @variables.appointment_date and @variables.appointment_time.
+                  • Preferred channel: Accept Email or Phone; set @variables.preferred_contact_method.
+                  • phone/email: Perform basic format validation in reasoning; set @variables.contact_phone and/or @variables.contact_email.
+                  • notes: Capture free text to @variables.booking_notes.
+              - After any successful update, re-render the summary with the current values (vehicle/trim, location, date, time, contact method, phone/email, test drive type, notes) and ask for confirmation again. STOP until the user confirms.
+              - If the user requests a change to date or time during this step (utterances like "change to 3pm", "make it next Friday", "push to tomorrow morning", "reschedule to May 12 at 10am"):
+                a) If the new date/time is not fully provided, ask: "No problem—what new date and time would you prefer?" and STOP to collect both.
+                b) When provided, silently extract and validate the new date and time using existing parsing utilities and {!@actions.Get_Today_Date} for normalization. Map the time to one of: "Morning (9-12)", "Afternoon (12-5)", "Evening (5-7)". If outside 9 AM–7 PM, inform business hours and ask for a valid time, then STOP.
+                c) Update the in-progress booking context (preferredDate/timeSlot) and set @variables.appointment_date and @variables.appointment_time to the normalized values, then re-confirm: "Great, I’ve updated your test drive to {date} at {time}. Shall I finalize this?" Only proceed when the user confirms.
+              - Finalize on explicit confirmation:
+                If the user confirms, run the action {!@actions.Electra_Create_Test_Drive_Booking} to book the test drive and display the booking details to the user. 
+                After the conversation is over, just run {!@actions.reset_active_subagent} to reset the topic to empty.
+                           
+        actions:
+            advance_to_step_1: @utils.setVariables
+                description: "Collected the contacts details - advance to collecting remaining information"
+                with flow_step = 1
+
+            advance_to_step_2: @utils.setVariables
+                description: "Displayed existing test drives — advance to collecting remaining information from the user"
+                with flow_step = 2
+
+            advance_to_step_3: @utils.setVariables
+                description: "proceed to summarize the booking details and then book the test drive on confirmation"
+                with flow_step = 3
+
+            advance_to_step_4: @utils.setVariables
+                description: "Generated signing URL and moving to signing status checks"
+                with flow_step = 4
+            advance_to_step_5: @utils.setVariables
+                description: "Document signing completed, confirming it with user"
+                with flow_step = 5
+            advance_to_step_6: @utils.setVariables
+                description: "DocuSign completed — proceed to booking creation"
+                with flow_step = 6
+
+            set_assign_user_details: @utils.setVariables
+                description: "Stores the user details"
+                with Email = ...
+                with firstName = ...
+                with lastName = ...
+                with phone = ...
+            go_to_Modify_Booking: @utils.transition to @subagent.Modify_Booking
+            Assign_Dealership_by_Zip_Code: @actions.Assign_Dealership_by_Zip_Code
+                with zipCode = ...
+            Electra_Create_Test_Drive_Booking: @actions.Electra_Create_Test_Drive_Booking
+                with agentSessionId = @variables.RoutableId
+                with email = ...
+                with firstName = ...
+                with lastName = ...
+                with notes = ...
+                with phone = ...
+                with preferredChannel = ...
+                with preferredDate = ...
+                with timeSlot = ...
+                with vehicleId = @variables.vehicleId
+                with zipCode = ...
+                with envelopeId = ...
+                with messagingUserId = @variables.EndUserId
+            reset_active_subagent: @utils.setVariables
+                description: "Clear active topic and search state on flow completion or EXIT_PROTOCOL"
+                with active_subagent = ""
+                with flow_step = 0
+            go_to_Explore_Vehicles: @utils.transition to @subagent.Explore_Vehicles
+            Check_Duplicate_Test_Drive: @actions.Check_Duplicate_Test_Drive
+                with email = ...
+                with phone = ...
+            # Use the shared Get_Today_Date action (define placeholder here for tool exposure in this subagent).
+            Get_Today_Date: @actions.Get_Today_Date
+                with ExistingRecord = ...        
+            Get_Showroom_Vehicles: @actions.Get_Showroom_Vehicles
+                with varShowroomName = ...
+                with varVehicleName = ...
+            set_vehicle_id: @utils.setVariables
+                description: "Set the selected vehicle Id into the global variable."
+                with vehicleId = ...
+
+    actions:
+        Docusign_Create_Envelope:
+            description: |
+                Creates a Docusign envelope for the NDA process.
+            label: "Docusign Create Envelope"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "creating the envelope.."
+            source: "Docusign_Create_Envelope"
+            target: "apex://DocusignCreateEnvelopeInvocable"
+                
+            inputs:
+                "email": string
+                    description: |
+                      Email
+                    label: "email"
+                    is_required: True
+                    is_user_input: True
+                "userName": string
+                    description: |
+                      User name
+                    label: "userName"
+                    is_required: True
+                    is_user_input: True
+                
+            outputs:
+                "output": string
+                    description: |
+                      Returns envelope Id
+                    label: "output"
+                    is_displayable: False
+                    filter_from_agent: False
+        Docusign_Generate_Signing_URL:
+            description: |
+                Generates a signing link for an existing envelope.
+            label: "Docusign Generate Signing URL"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "generating the singing link.."
+            source: "Docusign_Generate_Signing_URL"
+            target: "apex://DocusignCreateSigningUrlInvocable"
+                
+            inputs:
+                "email": string
+                    description: |
+                      Email
+                    label: "email"
+                    is_required: True
+                    is_user_input: False
+                "envelopeId": string
+                    description: |
+                      Envelope Id
+                    label: "envelopeId"
+                    is_required: True
+                    is_user_input: False
+                "returnUrl": string
+                    description: |
+                      the return url
+                    label: "returnUrl"
+                    is_required: True
+                    is_user_input: False
+                "userName": string
+                    description: |
+                      Username
+                    label: "userName"
+                    is_required: True
+                    is_user_input: False
+                
+            outputs:
+                "output": string
+                    description: |
+                      Returns the signing url
+                    label: "output"
+                    is_displayable: False
+                    filter_from_agent: False
+        Docusign_Check_Signing_Status:
+            description: |
+                Checks if the user has completed signing the envelope.
+            label: "Docusign Check Signing Status"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "Checking the signing status.."
+            source: "Docusign_Check_Signing_Status"
+            target: "apex://DocusignGetStatusInvocable"
+                
+            inputs:
+                "envelopeIds": string
+                    description: |
+                      Envelope Id
+                    label: "envelopeIds"
+                    is_required: False
+                    is_user_input: False
+                
+            outputs:
+                "output": boolean
+                    description: |
+                      Status output
+                    label: "output"
+                    is_displayable: False
+                    filter_from_agent: False
+
+        Assign_Dealership_by_Zip_Code:
+                description: |
+                    Resolves the nearest active dealership from TerritoryMapping__mdt for the supplied zip code.
+                label: "Assign Dealership by Zip Code"
+                require_user_confirmation: False
+                include_in_progress_indicator: True
+                progress_indicator_message: "Finding the nearest available Dealer...."
+                source: "Assign_Dealership_by_Zip_Code"
+                target: "apex://DealershipRoutingAction"
+                                
+                inputs:
+                    "zipCode": string
+                        description: |
+                            Customer zip or pin code
+                        label: "Zip Code"
+                        is_required: True
+                        is_user_input: True
+                                
+                outputs:
+                    "dealershipId": string
+                        description: |
+                            Dealership Id
+                        label: "Dealership Id"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "dealershipName": string
+                        description: |
+                            Dealer Ship Name
+                        label: "Dealership Name"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "errorMessage": string
+                        description: |
+                            Error Message
+                        label: "Error Message"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "successFlag": boolean
+                        description: |
+                            Success
+                        label: "Success Flag"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "warningMessage": string
+                        description: |
+                            Warning
+                        label: "Warning Message"
+                        is_displayable: False
+                        filter_from_agent: False
+        Electra_Create_Test_Drive_Booking:
+                description: |
+                    Creates Lead and TestDrive__c from Agentforce conversation data. Returns booking confirmation details.
+                label: "Create Test Drive Booking"
+                require_user_confirmation: False
+                include_in_progress_indicator: True
+                progress_indicator_message: "Booking your test drive...."
+                target: "apex://NewElectraTestDriveBookAction"
+                                
+                inputs:
+                    "agentSessionId": string
+                        description: |
+                            Messaging session Id
+                        label: "Agent Session Id"
+                        is_required: True
+                        is_user_input: True
+                    "email": string
+                        description: |
+                            User Email
+                        label: "Email"
+                        is_required: True
+                        is_user_input: True
+                    "firstName": string
+                        description: |
+                            User First name
+                        label: "First Name"
+                        is_required: True
+                        is_user_input: True
+                    "lastName": string
+                        description: |
+                            User Last Name
+                        label: "Last Name"
+                        is_required: True
+                        is_user_input: True
+                    "notes": string
+                        description: |
+                            User Notes
+                        label: "Notes"
+                        is_required: True
+                        is_user_input: True
+                    "phone": string
+                        description: |
+                            Phone Number
+                        label: "Phone"
+                        is_required: True
+                        is_user_input: True
+                    "preferredChannel": string
+                        description: |
+                            Preferred Channel
+                        label: "Preferred Channel"
+                        is_required: True
+                        is_user_input: True
+                    "preferredDate": date
+                        description: |
+                            Preferred Date
+                        label: "Preferred Date"
+                        is_required: True
+                        is_user_input: True
+                        complex_data_type_name: "lightning__dateType"
+                    "timeSlot": string
+                        description: |
+                            Preferred time slot
+                        label: "Time Slot"
+                        is_required: True
+                        is_user_input: True
+                    "vehicleId": string
+                        description: |
+                             vehicle model Id or Name
+                        label: "Vehicle Model Id or Name"
+                        is_required: True
+                        is_user_input: True
+                    "zipCode": string
+                        description: |
+                            Zip Code
+                        label: "Zip Code"
+                        is_required: True
+                        is_user_input: True
+                    "envelopeId": string
+                        description: |
+                            Docusign Envelope Id
+                        label: "Envelope Id"
+                        is_required: False
+                        is_user_input: False
+                    "messagingUserId": string
+                        description: |
+                            Messaging End User Id
+                        label: "Messaging User Id"
+                        is_required: True
+                        is_user_input: True
+                                
+                outputs:
+                    "confirmationMsg": string
+                        description: |
+                            Confirmation message through the result
+                        label: "Confirmation Message"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "dealershipId": string
+                        description: |
+                            Dealership Id
+                        label: "Dealership Id"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "dealershipName": string
+                        description: |
+                            Dealership name
+                        label: "Dealership Name"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "errorMessage": string
+                        description: |
+                            Error Message
+                        label: "Error Message"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "leadId": string
+                        description: |
+                            Lead Id
+                        label: "Lead Id"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "successFlag": boolean
+                        description: |
+                            Success Flag
+                        label: "Success Flag"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "testDriveId": string
+                        description: |
+                            Test Drive Id
+                        label: "Test Drive Id"
+                        is_displayable: False
+                        filter_from_agent: False
+                    "testDriveName": string
+                        description: |
+                            Test Drive name
+                        label: "Test Drive Name"
+                        is_displayable: False
+                        filter_from_agent: False
+        Check_Duplicate_Test_Drive:
+            description: |
+                Checks if there are existing active test drive bookings for a given email or phone.
+            label: "Check Duplicate Test Drive"
+            require_user_confirmation: False
+            include_in_progress_indicator: True
+            progress_indicator_message: "checking for the existing test drive bookings.."
+            source: "Check_Duplicate_Test_Drive"
+            target: "apex://CheckDuplicateBookingAction"
+                
+            inputs:
+                "email": string
+                    description: |
+                      Customer Email
+                    label: "Email"
+                    is_required: True
+                    is_user_input: False
+                "phone": string
+                    description: |
+                      Customer Phone Number
+                    label: "Phone"
+                    is_required: False
+                    is_user_input: False
+                
+            outputs:
+                "count": integer
+                    description: |
+                      Number of duplicates
+                    label: "Duplicate Count"
+                    is_displayable: False
+                    filter_from_agent: False
+                "duplicateRecords": list[object]
+                    description: |
+                      Duplicate Records
+                    label: "Duplicate Records"
+                    is_displayable: False
+                    filter_from_agent: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                "hasDuplicate": boolean
+                    description: |
+                      Has Duplicates 
+                    label: "Has Duplicate"
+                    is_displayable: False
+                    filter_from_agent: False
+         
+
+        # Placeholder to satisfy tool exposure in reasoning.actions
+        Get_Today_Date:
+            description: "Get today's date for normalization"
+            target: "flow://Electra_Car_Get_Today_Date"
+            inputs:
+                ExistingRecord: object
+                    label: "ExistingRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+            outputs:
+                TodayDate: object
+                    label: "TodayDate"
+                    complex_data_type_name: "lightning__dateType"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "Today's Date"
+        Get_Showroom_Vehicles:
+            label: "Get Showroom Vehicles"
+            description: "gets  vehicles which are available in Showroom"
+            target: "flow://Get_Showroom_Vehicle_Records"
+            inputs:
+                varShowroomName: string
+                    label: "varShowroomName"
+                    description: "contains the showroom Name"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    is_user_input: False
+                    filter_from_agent: False
+                    is_displayable: False
+                varVehicleName: string
+                    label: "varVehicleName"
+                    description: "contains the Vehicles Name"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    is_user_input: False
+                    filter_from_agent: False
+                    is_displayable: False
+            outputs:
+                out_JunctionRecords: list[object]
+                    label: "out_JunctionRecords"
+                    description: "contains the showroom & vehicle details (include lightweight summary fields such as Name/Model, Trim, Price, Location for listing)"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    developer_name: "out_JunctionRecords"
+                    is_displayable: False
+                    filter_from_agent: False
+
+
+subagent Modify_Booking:
+    label: "Modify Booking"
+    description: "Handles updates to existing bookings or test drives, including: reschedule (change/move test drive time), cancel reservation/booking, update details, and confirm booking status."
+    before_reasoning:
+        set @variables.active_subagent = "Modify_Booking"
+    reasoning:
+        instructions: ->
+            | schedule (change/move test drive time), cancel reservation/booking, update details, and confirm booking status.
+            | 1. Evaluate Variables: Check if {!@variables.Booking_Id} has a value. If not, check if both {!@variables.Email} and {!@variables.PhoneNumber} have values.
+            | 2. Primary Identification: If no variables are populated, ask the user to provide their Booking Id. STOP and wait for the user to reply. Do not transition to another topic while waiting for this information.
+            | 3. Save and Retrieve (Primary): When the user provides the Booking Id, Invoke {!@actions.set_Booking_Id} and pass that specific Booking Id to 'Booking_Id' and immediately execute the {!@actions.Electra_Car_Get_Existing_Test_Drive} action.
+            | 4. Fallback Identification: If the user states they do not have or do not know their Booking Id, ask them to provide BOTH their Email and Phone Number. STOP and wait for their reply.
+            | 5. Save and Retrieve (Fallback): Once provided, Invoke the actions {!@actions.set_Email}, {!@actions.set_PhoneNumber} and pass that specific Email to 'Email' and specific PhoneNumber to 'PhoneNumber', then execute {!@actions.Electra_Car_Get_Existing_Test_Drive}.
+            | 6. Output Display Rules: If the details were fetched using Booking_Id, you must use the `BookingRecord` output to display the details. If fetched using Email and Phone Number, use the `BookingRecords` output.
+            | 7. Handle Multiple Records: If the retrieval uses `BookingRecords` and returns multiple booking records, clearly list the bookings and ask the user to specify exactly which one they want to change the vehicle. STOP and wait for their selection.
+            | 8. Determine Intent: Once a specific record is identified (either uniquely returned or selected by the user from a list), determine if the user wants to check status, cancel, or reschedule. If their intent is unclear, ask them. STOP and wait for their reply.
+            | 9. Confirm Status: If the user's intent is simply to check or confirm the status of their booking, present the retrieved record details (such as current status, date, and slot) to them clearly. Ask if they need to cancel or reschedule it, and STOP and wait for their reply.
+            | 10. Gather Cancellation Reason: If the user requests to cancel the booking, you MUST ask them to provide the exact reason for their cancellation. STOP and wait for their reply.
+            | 11. Handle Cancellation Reason & Routing: Evaluate the user's provided cancellation reason.
+              - If unavailability (e.g., busy, scheduling conflict): Suggest rescheduling instead. Ask for their new Preferred Date and preferred time. STOP and wait, then jump to Step 15 (Date and Time Normalization).
+              - If changing zip code/location: Inform them that you will cancel the current booking and help them book a new one. Execute {!@actions.Electra_Car_Cancel_Test_Drive} passing the reason to `CancellationNotes`. Display the `CancellationMessage`. Then, BEFORE transitioning, mentally lock in the customer's known Name, Email, and Phone Number from the current context. Execute {!@actions.go_to_Book_Test_Drive} with the strict instruction to the next topic to bypass asking for Name, Email, and Phone Number again, and proceed directly to asking for the new Zip Code.
+              - For all other reasons: Summarize the record details and ask for explicit confirmation to permanently cancel. STOP and wait for their reply.
+            | 12. Execute Standard Cancel: Once the user explicitly confirms a standard cancellation, execute the {!@actions.Electra_Car_Cancel_Test_Drive} action, passing the identified record to `ExistingTestDriveRecord` and the reason to `CancellationNotes`. Display the `CancellationMessage` and reset the active topic using {!@actions.reset_active_subagent}.
+            | 13. Gather Reschedule Details: If the user requests to reschedule but has missing details, ask them for their new Preferred Date, preferred time, and a Reschedule reason. Inform them that available times are between 9:00 AM and 7:00 PM. STOP and wait for the user to provide this information. If they already provided these details, proceed immediately to the next step.
+            | 14. Execute {!@actions.Get_Today_Date} by passing "ExistingTestDriveRecord" and invoke {!@actions.set_Current_Date} by passing "TodayDate".
+              The Date and Time Normalization: You MUST silently determine the exact date. DO NOT ask the user to convert, confirm, or provide the date in YYYY-MM-DD format.
+              - Date Calculation: Invoke {!@actions.set_Current_Date} by passing Today's exact date. If the user provides a relative date (e.g., "coming Thursday", "tomorrow", "April 30"), automatically calculate and convert it into the absolute calendar date (YYYY-MM-DD) strictly based on {!@variables.Current_Date}.
+            | 15. Time Slot Mapping: Silently map their requested time to one of the following exact string formats before calling any actions:
+              - If the user specifies "Morning" OR a time between 9:00 AM and 11:59 AM, map it to: "Morning (9-12)"
+              - If the user specifies "Afternoon" OR a time between 12:00 PM and 4:59 PM, map it to: "Afternoon (12-5)"
+              - If the user specifies "Evening" OR a time between 5:00 PM and 7:00 PM, map it to: "Evening (5-7)"
+              - If the user requests a time outside of the 9 AM to 7 PM window, inform them of the business hours and ask them to choose a valid time. STOP and wait.
+            | 16. Check Slot Availability: Once you have the mapped time slot and absolute date, execute the {!@actions.Is_Booking_Slots_Available} action. Pass the identified record to `ExistingTestDriveRecord`, the new date to `PreferredDate`, and the strictly mapped string to `PreferredSlot`.
+            | 17. Evaluate Slot Capacity: Review the `BookedAppointmentCount` output from the availability check.
+              - If `BookedAppointmentCount` is 3 or greater (meaning the slot is full): Inform the user that the selected slot is fully booked. Ask them to provide a new preferred date and time, then return to Step 14 to remap and re-verify. STOP and wait for their reply.
+              - If `BookedAppointmentCount` is less than 3 (meaning there is space available): Proceed to the next step.
+            | 18. Confirm Reschedule: Summarize the available new calculated date and time for the user and ask for explicit confirmation to proceed with the update. STOP and wait for their reply. If they decline, ask if they need to choose a different time.
+            | 19. Execute Update: Once the user confirms the reschedule, execute the {!@actions.Electra_Car_Update_Test_Drive} action. Pass the identified record to `ExistingTestDriveRecord`, the new date to `PreferredDate`, the strictly mapped string from Step 14 to `PreferredSlot`, the reason to `RescheduleNotes`. Confirm the update with the user using the `UpdatedBookingRecord` output and reset the controlling variable to null using {!@actions.reset_active_subagent}.
+        actions:
+            set_Booking_Id: @utils.setVariables
+                description: "Set the Booking Id into the global variable."
+                with Booking_Id = ...
+            set_Email: @utils.setVariables
+                description: "Set the user provided Email into the global variable."
+                with Email = ...
+            set_PhoneNumber: @utils.setVariables
+                description: "Set the user provided phone number into the global variable."
+                with PhoneNumber = ...
+            set_Current_Date: @utils.setVariables
+                description: "Set the current date into the global variable."
+                with Current_Date = ...
+            reset_active_subagent: @utils.setVariables
+                description: "Clear active topic and search state on flow completion or EXIT_PROTOCOL"
+                with active_subagent = ""
+            go_to_Book_Test_Drive: @utils.transition to @subagent.Book_Test_Drive
+                description: "Transition to the Book_Test_Drive topic when a user wants to book a test drive in a new zip code. Customer details are already collected."
+            Electra_Car_Update_Test_Drive: @actions.Electra_Car_Update_Test_Drive
+                with ExistingTestDriveRecord = ...
+                with PreferredDate = ...
+                with PreferredSlot = ...
+                with ResheduleNotes = ...
+                with TestDriveVehicle = ...
+            Electra_Car_Cancel_Test_Drive: @actions.Electra_Car_Cancel_Test_Drive
+                with CancellationNotes = ...
+                with ExistingTestDriveRecord = ...
+            Is_Booking_Slots_Available: @actions.Is_Booking_Slots_Available
+                with ExistingTestDriveRecord = ...
+                with PreferredDate = ...
+                with PreferredSlot = ...
+            Get_Today_Date: @actions.Get_Today_Date
+                with ExistingRecord = ...
+            Electra_Car_Get_Existing_Test_Drive: @actions.Electra_Car_Get_Existing_Test_Drive
+                with BookingId = ...
+                with Email = ...
+                with PhoneNumber = ...
+
+
+    actions:
+        Is_Booking_Slots_Available:
+            label: "Is Booking Slots Available"
+            description: "This action will check whether booking slots are filled for the preferred slot or not"
+            target: "flow://Electra_Car_Booking_Slots_Available"
+            inputs:
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+                PreferredDate: object
+                    label: "PreferredDate"
+                    description: "Preferred Date for the End user"
+                    is_required: False
+                    complex_data_type_name: "lightning__dateType"
+                PreferredSlot: string
+                    label: "PreferredSlot"
+                    description: "Preferred Slot for the End User"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+            outputs:
+                BookedAppointmentCount: number
+                    label: "BookedAppointmentCount"
+                    description: "The number of appointments that are already booked and taken for this slot. Max capacity is 3."
+                    complex_data_type_name: "lightning__numberType"
+                    developer_name: "BookedAppointmentCount"
+                    is_displayable: False
+                    filter_from_agent: False
+        Electra_Car_Update_Test_Drive:
+            label: "Electra Car Update Test Drive"
+            description: "This action used to update the Existing Drive"
+            target: "flow://Electra_Car_Update_Test_Drive"
+            inputs:
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "ExistingTestDriveRecord which needs to updated"
+                PreferredDate: object
+                    label: "PreferredDate"
+                    description: "Preferred Date for Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__dateType"
+                PreferredSlot: string
+                    label: "PreferredSlot"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "PreferredSlot for Test Drive"
+                ResheduleNotes: string
+                    label: "ResheduleNotes"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "ResheduleNotes for Test Drive"
+                TestDriveVehicle: object
+                    label: "TestDriveVehicle"
+                    description: "Vehicle for Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+            outputs:
+                UpdatedBookingRecord: object
+                    label: "UpdatedBookingRecord"
+                    description: "Test Drive Record with Updated Details"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: False
+                    filter_from_agent: False
+        Get_Today_Date:
+            label: "Get Today Date"
+            description: "This action used to get the Today's date"
+            target: "flow://Electra_Car_Get_Today_Date"
+            inputs:
+                ExistingRecord: object
+                    label: "ExistingRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+            outputs:
+                TodayDate: object
+                    label: "TodayDate"
+                    complex_data_type_name: "lightning__dateType"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "Today's Date"
+        Electra_Car_Get_Existing_Test_Drive:
+            label: "Electra Car Get Existing Test Drive"
+            description: "This action used to get the existing Test drive details"
+            target: "flow://Electra_Car_Get_Test_Drive"
+            inputs:
+                BookingId: string
+                    label: "BookingId"
+                    description: "BookingId of the Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                Email: string
+                    label: "Email"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Email of the end user"
+                PhoneNumber: string
+                    label: "PhoneNumber"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Phone number of the end user"
+            outputs:
+                BookingRecord: object
+                    label: "BookingRecord"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: True
+                    filter_from_agent: False
+                    description: "Single Existing Test Drive Record"
+                BookingRecords: list[object]
+                    label: "BookingRecords"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: True
+                    filter_from_agent: False
+                    description: "List of Test Drive Records"
+
+        Electra_Car_Cancel_Test_Drive:
+            label: "Electra Car Cancel Test Drive"
+            description: "This action used to cancel the Existing Test Drive"
+            target: "flow://Electra_Car_Cancel_Test_Drive_Booking"
+            inputs:
+                CancellationNotes: string
+                    label: "CancellationNotes"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Cancellation Notes"
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+            outputs:
+                CancellationMessage: string
+                    label: "CancellationMessage"
+                    complex_data_type_name: "lightning__textType"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "Cancellation Message"
+
+subagent escalation:
+    label: "Escalate To Human"
+    description: "Handles requests from users who want to transfer or escalate their conversation to a live human agent."
+    reasoning:
+        instructions: ->
+          | If a user explicitly asks to transfer to a live agent, after transitioning to the escalation subagent you must call {!@actions.escalate_to_human} to complete the escalation action and do not attempt to answer any further questions.
+        actions:
+            escalate_to_human: @utils.escalate
+                description: "Escalates the conversation to a live human agent via the Test_Drive_Route_to_Queue flow using RoutableId"
+
+
+
+subagent Explore_Vehicles:
+    label: "Explore Vehicles"
+    description: "Use this to search the car catalog and provide specific details, specs, or availability for individual car models."
+    before_reasoning:
+        set @variables.active_subagent = "Explore_Vehicles"
+    reasoning:
+        instructions: ->
+            |   ###Role
+                You are a vehicle assistant for the "Electra" application. Your goal is to help users browse cars, view technical specifications, compare models, and book test drives.
+            
+                Step 1: Disambiguate Broad Requests
+                    If the user submits a broad request (e.g., "Show all vehicles") without specific criteria, like below questions
+                        View all showrooms available for test drives.
+                        View all vehicles available in the Electra application.
+                        View all vehicles available for test drive at a specific showroom.
+                        View all showrooms offering a test drive for a specific vehicle.
+                        then Execute {!@actions.Get_Showroom_Vehicles}
+
+                Step 2: Intent Routing & Execution
+                    Listen to the user's request and execute the corresponding logic path:
+                    Path A: Search & Browse (e.g., "What SUVs do you have?" or choosing Option 1/2/3/4 above)
+                        Execute {!@actions.Get_Showroom_Vehicles} or {!@actions.Search_Vehicle_Catalog} depending on context.
+                        If out_JunctionRecords is empty: Say, "I'm sorry, I couldn't find any vehicles matching that description."
+                        If records are found: Display them using the appropriate Response Template below. Always ask the user if they would like more details on a specific model from the list.
+
+                    Path B: View Deep Details (e.g., "Tell me more about the XL5")
+                        When the user selects a specific vehicle, you must first execute {!@actions.set_vehicle_id} to store the ID.
+                        Then, execute {!@actions.Display_Vehicle_Details} using the specific Model Name or ID.
+                        Display the result using the Detail Format.
+
+                    Path C: Compare Vehicles (e.g., "Compare the XL5 and the Model S")
+                        Execute {!@actions.Get_Vehicle_Details} for each vehicle mentioned by passing the vehicle names.
+                        Present a side-by-side comparison of the technical details.
+
+                    Path D: Book a Test Drive
+                        Based on the user selected specific vehicle and showroom run the selection using {!@actions.Get_Showroom_Vehicles}.
+                        Extract the ID from  out_JunctionRecords output and run {!@actions.set_vehicle_id} to store ID.
+                        CRITICAL Pre-condition for Booking: Before you are allowed to execute {!@actions.Book_Test_Drive}, you must verify:
+                            1.The user explicitly confirmed their final vehicle choice in the most recent message.
+                            2.The variable @variables.vehicleId contains the exact ID of that specific confirmed vehicle.
+                            3.Strict Rule: If @variables.vehicleId is null, an empty string (""), or belongs to a previously discussed vehicle rather than the current selected one for test drive, DO NOT transition to booking. Instead, pause and ask the user to re-confirm which vehicle they want to test drive.
+
+                    Path E: Exit
+                        If the user wants to exit or cancel, execute {!@actions.reset_active_subagent} to clear the state.
+
+                Step 3: Response Templates
+                    You must strictly adhere to these formatting rules based on the action performed:
+
+                    1. Junction / Showroom Format (For Get_Showroom_Vehicles output)
+                        Group the out_JunctionRecords results dynamically by Vehicle, Showroom Name, or Zip Code based on the user's query. Use a bolded heading for the group name.
+                        [Insert Group Name: Vehicle / Showroom / Zip Code]
+                        ** showroom name : out_JunctionRecords.showroom_Name__c
+                        ** Zip Code : out_JunctionRecords.Showroom_Zip_Code__c
+                        ** Vehicle Name : out_JunctionRecords.Vehicle_Name__c
+
+                    2. Catalog Format (For Search_Vehicle_Catalog multiple results)
+                        **Vehicle:** [Name] ([Vehicle_Year__c]) Show Vehicle name in bold
+                        **Drive Train:** [Drive_Train__c]
+                        **Status:** [Test_Drive_Eligible__c]
+
+                    3. Detail Format (For Display_Vehicle_Details single result or Search_Vehicle_Catalog single result)
+                        **Model:** [Name]
+                        **Year:** [Vehicle_Year__c]
+                        **Engine/Drive:** [Drive_Train__c]
+                        **Location:** [Store_Location__c]
+                        **Full Specs:** [Technical_Notes__c]
+                        **Availability:** [Test_Drive_Eligible__c]
+
+                Step 4: Guardrails
+                    Zero Hallucination: If out_JunctionRecords is empty, do not invent or guess showroom names or vehicles.
+                    Pacing: Do not show full technical specs (Detail Format) for multiple vehicles at once. Provide them one at a time unless explicitly comparing.
+                    Confirmation Requirement: Always explicitly confirm the Showroom Name (or Zip Code) AND the Vehicle Name with the user before finalizing interest to book a test drive.
+        actions:
+            Search_Vehicle_Catalog: @actions.Search_Vehicle_Catalog
+                with varVehicleModelInput = ...
+            Display_Vehicle_Details: @actions.Display_Vehicle_Details
+                available when @variables.vehicleId is not None and @variables.vehicleId != ""
+                with varVehicleModelInput = @variables.vehicleId
+            reset_active_subagent: @utils.setVariables
+                description: "Clear active subagent and search state on flow completion or EXIT_PROTOCOL"
+                with active_subagent = ""
+            Get_Showroom_Vehicles: @actions.Get_Showroom_Vehicles
+                with varShowroomName = ...
+                with varVehicleName = ...
+            set_vehicle_id: @utils.setVariables
+                description: "Set the selected vehicle Id into the global variable."
+                with vehicleId = ...
+            Book_Test_Drive: @utils.transition to @subagent.Book_Test_Drive
+                description: "Use this action when the user wants to book a test drive"
+                available when @variables.vehicleId is not None and @variables.vehicleId != ""
+            Get_Vehicle_Details: @actions.Get_Vehicle_Details
+                with varVehicleName = ...
+
+
+    actions:
+        Search_Vehicle_Catalog:
+          description: "Fetches a list of available vehicles based on general criteria like model or type."
+          inputs:
+            varVehicleModelInput: string
+              description: "This allows Agentforce to pass the specific model name into the Flow."
+              label: "varVehicleModelInput"
+              is_required: False
+              complex_data_type_name: "lightning__textType"
+          outputs:
+            out_VehicleList: list[object]
+              description: "Vehicles List"
+              label: "out_VehicleList"
+              complex_data_type_name: "lightning__recordInfoType"
+              filter_from_agent: False
+              is_displayable: False
+          target: "flow://Get_Available_Vehicles_Information"
+          label: "Search Vehicle Catalog"
+          require_user_confirmation: False
+          include_in_progress_indicator: False
+        Display_Vehicle_Details:
+          description: "Queries the database for available vehicles based on model name or Id (expects vehicleId)."
+          inputs:
+            varVehicleModelInput: string
+              description: "Pass the selected vehicle Id or model name."
+              label: "varVehicleModelInput"
+              is_required: False
+              complex_data_type_name: "lightning__textType"
+          outputs:
+            out_VehicleList: list[object]
+              description: "A list containing vehicle record details"
+              label: "out_VehicleList"
+              complex_data_type_name: "lightning__recordInfoType"
+              filter_from_agent: False
+              is_displayable: False
+          target: "flow://Get_Available_Vehicles_Information"
+          label: "Display Vehicle Details"
+          require_user_confirmation: False
+          include_in_progress_indicator: False
+                                                                                
+                                                                                
+                                                                                
+                                                                                      
+                                                                                              
+                                                                                
+        # No reasoning actions in this subagent
+        Get_Showroom_Vehicles:
+            label: "Get Showroom Vehicles"
+            description: "gets all vehicles which are available in Showroom"
+            target: "flow://Get_Showroom_Vehicle_Records"
+            inputs:
+                varShowroomName: string
+                    label: "varShowroomName"
+                    description: "contains the showroom Name"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    is_user_input: False
+                    filter_from_agent: False
+                    is_displayable: False
+                varVehicleName: string
+                    label: "varVehicleName"
+                    description: "contains the Vehicles Name"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    is_user_input: False
+                    filter_from_agent: False
+                    is_displayable: False
+            outputs:
+                out_JunctionRecords: list[object]
+                    label: "out_JunctionRecords"
+                    description: "contains the showroom & vehicle details (include lightweight summary fields such as Name/Model, Trim, Price, Location for listing)"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    developer_name: "out_JunctionRecords"
+                    is_displayable: False
+                    filter_from_agent: False
+        Get_Vehicle_Details:
+            label: "Get Vehicle Details"
+            description: |
+        
+                get specific vehicle Definition
+            target: "flow://Compare_Vehicles"
+            inputs:
+                varVehicleName: string
+                    label: "varVehicleName"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+            outputs:
+                VarVehicleDefinitionDetails: object
+                    label: "VarVehicleDefinitionDetails"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: False
+                    filter_from_agent: False
+
+subagent Change_Vehicle_for_Test_Drive:
+    label: "Change Vehicle for Test Drive"
+    description: |
+
+        Use this topic Whenever user want to change the vehicle for Test drive
+    before_reasoning:
+        set @variables.active_subagent = "Change_Vehicle_for_Test_Drive"
+    reasoning:
+        instructions: ->
+            | If the user's intent is changing Vehicle for the Test Drive
+            | 1. Evaluate Variables: Check if {!@variables.Booking_Id} has a value. If not, check if both {!@variables.Email} and {!@variables.PhoneNumber} have values.
+            | 2. Primary Identification: If no variables are populated, ask the user to provide their Booking Id. STOP and wait for the user to reply. Do not transition to another topic while waiting for this information.
+            | 3. Save and Retrieve (Primary): When the user provides the Booking Id, Invoke {!@actions.set_Booking_Id} and pass that specific Booking Id to 'Booking_Id' and immediately execute the {!@actions.Electra_Car_Get_Existing_Test_Drive} action.
+            | 4. Fallback Identification: If the user states they do not have or do not know their Booking Id, ask them to provide BOTH their Email and Phone Number. STOP and wait for their reply.
+            | 5. Save and Retrieve (Fallback): Once provided, Invoke the actions {!@actions.set_Email}, {!@actions.set_PhoneNumber} and pass that specific Email to 'Email' and specific PhoneNumber to 'PhoneNumber', then execute {!@actions.Electra_Car_Get_Existing_Test_Drive}.
+            | 6. Output Display Rules: If the details were fetched using Booking_Id, you must use the `BookingRecord` output to display the details. If fetched using Email and Phone Number, use the `BookingRecords` output.
+            | 7. Handle Multiple Records: If the retrieval uses `BookingRecords` and returns multiple booking records, clearly list the bookings and ask the user to specify exactly which one they want to change the vehicle. STOP and wait for their selection.
+            | 8. Determine Intent: Once a specific record is identified (either uniquely returned or selected by the user from a list), Immediately Execute {!@actions.Get_Showroom_vehicles} passing the identified Test Drive Zipcode to varShowroomName. Display the available `out_JunctionRecords` to the user and ask them to select one. STOP and wait for their selection. Once selected, ask the user if they want to continue with their currently scheduled preferred date and time slot. STOP and wait for their reply.
+            | If the user want to search the vehicles by the vehicle name, Immediately Execute {!@actions.Get_Showroom_vehicles} passing the user provided vehicle name to varVehicleName. Display the available `out_JunctionRecords` to the user and ask them to select one. STOP and wait for their selection. Once selected, ask the user if they want to continue with their currently scheduled preferred date and time slot. STOP and wait for their reply.
+            | If they want to change the existing preferred date and time, ask them for their new Preferred Date, preferred time, and a Reschedule reason. Inform them that available times are between 9:00 AM and 7:00 PM. STOP and wait for the user to provide this information. If they already provided these details, proceed immediately to the next step.
+            | 9. Date and Time Normalization: You MUST silently determine the exact date. DO NOT ask the user to convert, confirm, or provide the date in YYYY-MM-DD format.
+            | - Date Calculation: If the user provides a relative date (e.g., "Monday", "coming Monday", "tomorrow"), automatically calculate and convert it into the absolute calendar date (YYYY-MM-DD) based on the current system date in the background.
+            | 10. Time Slot Mapping: Silently map their requested time to one of the following exact string formats before calling any actions:
+            | - If the user specifies "Morning" OR a time between 9:00 AM and 11:59 AM, map it to: "Morning (9-12)"
+            | - If the user specifies "Afternoon" OR a time between 12:00 PM and 4:59 PM, map it to: "Afternoon (12-5)"
+            | - If the user specifies "Evening" OR a time between 5:00 PM and 7:00 PM, map it to: "Evening (5-7)"
+            | - If the user requests a time outside of the 9 AM to 7 PM window, inform them of the business hours and ask them to choose a valid time. STOP and wait.
+            | 11. Check Slot Availability: Once you have the mapped time slot and absolute date, execute the {!@actions.Is_Booking_Slots_Available} action. Pass the identified record to `ExistingTestDriveRecord`, the new date to `PreferredDate`, and the strictly mapped string to `PreferredSlot`.
+            | 12. Evaluate Slot Capacity: Review the `BookingSlotsSize` output from the availability check.
+            | - If `BookingSlotsSize` is 3 or greater: Inform the user that the selected slot is fully booked. Ask them to provide a new preferred date and time, then return to Step 14 to remap and re-verify until a slot with a size less than 3 is found. STOP and wait for their reply.
+            | - If `BookingSlotsSize` is less than 3: Proceed to the next step.
+            | 13. Execute Update: Once the user confirms the vehicle, preferred date and time, execute the {!@actions.Electra_Car_Update_Test_Drive} action. Pass the identified test drive record to `ExistingTestDriveRecord`, the new date to `Preferred_Date`, the strictly mapped string from Step 10 to `PreferredSlot`, the reason to `RescheduleNotes`, and the selected vehicle to `ShowroomVehicle` (if a new one was selected in Step 8). Confirm the update with the user using the `UpdatedBookingRecord` output and reset the controlling variable to null using {!@actions.reset_active_subagent}.
+        actions:
+            set_Booking_Id: @utils.setVariables
+                description: "Set the Booking Id into the global variable."
+                with Booking_Id = ...
+            set_Email: @utils.setVariables
+                description: "Set the user provided Email into the global variable."
+                with Email = ...
+            set_PhoneNumber: @utils.setVariables
+                description: "Set the user provided phone number into the global variable."
+                with PhoneNumber = ...
+            set_Current_Date: @utils.setVariables
+                description: "Set the current date into the global variable."
+                with Current_Date = ...
+            reset_active_subagent: @utils.setVariables
+                description: "Clear active topic and search state on flow completion or EXIT_PROTOCOL"
+                with active_subagent = ""
+            go_to_Book_Test_Drive: @utils.transition to @subagent.Book_Test_Drive
+                description: "Transition to the Book_Test_Drive topic when a user wants to book a test drive in a new zip code. Customer details are already collected."
+            Electra_Car_Update_Test_Drive: @actions.Electra_Car_Update_Test_Drive
+                with ExistingTestDriveRecord = ...
+                with PreferredDate = ...
+                with PreferredSlot = ...
+                with ResheduleNotes = ...
+                with TestDriveVehicle = ...
+            Is_Booking_Slots_Available: @actions.Is_Booking_Slots_Available
+                with ExistingTestDriveRecord = ...
+                with PreferredDate = ...
+                with PreferredSlot = ...
+            Get_Today_Date: @actions.Get_Today_Date
+                with ExistingRecord = ...
+            Electra_Car_Get_Existing_Test_Drive: @actions.Electra_Car_Get_Existing_Test_Drive
+                with BookingId = ...
+                with Email = ...
+                with PhoneNumber = ...
+            Get_Showroom_vehicles: @actions.Get_Showroom_vehicles
+                with varShowroomName = ...
+                with varVehicleName = ...
+            Electra_Car_Cancel_Test_Drive: @actions.Electra_Car_Cancel_Test_Drive
+                with CancellationNotes = ...
+                with ExistingTestDriveRecord = ...
+
+
+    actions:
+        Is_Booking_Slots_Available:
+            label: "Is Booking Slots Available"
+            description: "This action will check whether booking slots are filled for the preferred slot or not"
+            target: "flow://Electra_Car_Booking_Slots_Available"
+            inputs:
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+                PreferredDate: object
+                    label: "PreferredDate"
+                    description: "Preferred Date for the End user"
+                    is_required: False
+                    complex_data_type_name: "lightning__dateType"
+                PreferredSlot: string
+                    label: "PreferredSlot"
+                    description: "Preferred Slot for the End User"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+            outputs:
+                BookedAppointmentCount: number
+                    label: "BookedAppointmentCount"
+                    description: "The number of appointments that are already booked and taken for this slot. Max capacity is 3."
+                    complex_data_type_name: "lightning__numberType"
+                    developer_name: "BookedAppointmentCount"
+                    is_displayable: False
+                    filter_from_agent: False
+        Electra_Car_Update_Test_Drive:
+            label: "Electra Car Update Test Drive"
+            description: "This action used to update the Existing Drive"
+            target: "flow://Electra_Car_Update_Test_Drive"
+            inputs:
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "ExistingTestDriveRecord which needs to updated"
+                PreferredDate: object
+                    label: "PreferredDate"
+                    description: "Preferred Date for Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__dateType"
+                PreferredSlot: string
+                    label: "PreferredSlot"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "PreferredSlot for Test Drive"
+                ResheduleNotes: string
+                    label: "ResheduleNotes"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "ResheduleNotes for Test Drive"
+                TestDriveVehicle: object
+                    label: "TestDriveVehicle"
+                    description: "Vehicle for Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+            outputs:
+                UpdatedBookingRecord: object
+                    label: "UpdatedBookingRecord"
+                    description: "Test Drive Record with Updated Details"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: False
+                    filter_from_agent: False
+        Get_Today_Date:
+            label: "Get Today Date"
+            description: "This action used to get the Today's date"
+            target: "flow://Electra_Car_Get_Today_Date"
+            inputs:
+                ExistingRecord: object
+                    label: "ExistingRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+            outputs:
+                TodayDate: object
+                    label: "TodayDate"
+                    complex_data_type_name: "lightning__dateType"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "Today's Date"
+        Electra_Car_Get_Existing_Test_Drive:
+            label: "Electra Car Get Existing Test Drive"
+            description: "This action used to get the existing Test drive details"
+            target: "flow://Electra_Car_Get_Test_Drive"
+            inputs:
+                BookingId: string
+                    label: "BookingId"
+                    description: "BookingId of the Test Drive"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                Email: string
+                    label: "Email"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Email of the end user"
+                PhoneNumber: string
+                    label: "PhoneNumber"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Phone number of the end user"
+            outputs:
+                BookingRecord: object
+                    label: "BookingRecord"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: True
+                    filter_from_agent: False
+                    description: "Single Existing Test Drive Record"
+                BookingRecords: list[object]
+                    label: "BookingRecords"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: True
+                    filter_from_agent: False
+                    description: "List of Test Drive Records"
+        Get_Showroom_vehicles:
+            label: "Get Showroom vehicles"
+            description: "This action used to get the showroom vehicles"
+            target: "flow://Get_Showroom_Vehicle_Records"
+            inputs:
+                varShowroomName: string
+                    label: "varShowroomName"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Zip code the showroom "
+                varVehicleName: string
+                    label: "varVehicleName"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Vehicle name to test drive"
+            outputs:
+                out_JunctionRecords: list[object]
+                    label: "out_JunctionRecords"
+                    complex_data_type_name: "lightning__recordInfoType"
+                    is_displayable: True
+                    filter_from_agent: False
+                    description: "List of vehicle records"
+
+        Electra_Car_Cancel_Test_Drive:
+            label: "Electra Car Cancel Test Drive"
+            description: "This action used to cancel the Existing Test Drive"
+            target: "flow://Electra_Car_Cancel_Test_Drive_Booking"
+            inputs:
+                CancellationNotes: string
+                    label: "CancellationNotes"
+                    is_required: False
+                    complex_data_type_name: "lightning__textType"
+                    description: "Cancellation Notes"
+                ExistingTestDriveRecord: object
+                    label: "ExistingTestDriveRecord"
+                    is_required: False
+                    complex_data_type_name: "lightning__recordInfoType"
+                    description: "Existing Test Drive Record"
+            outputs:
+                CancellationMessage: string
+                    label: "CancellationMessage"
+                    complex_data_type_name: "lightning__textType"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "Cancellation Message"
+
+
+
