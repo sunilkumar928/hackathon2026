@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Answers a user’s query with information in the Knowledge base.</description>
+    <developerName>answerWithKnowledge_Override</developerName>
+    <masterLabel>Answer Questions with Knowledge</masterLabel>
+    <overridable>false</overridable>
+    <overrideSource>einstein_gpt__answerWithKnowledge</overrideSource>
+    <templateVersions>
+        <content>###
+INSTRUCTIONS
+
+ 1. Analyze the query: Carefully read and understand the user&apos;s question or issue from the QUESTION section.
+ 2. Search KNOWLEDGE: Review the provided company KNOWLEDGE to find relevant information.
+ 3. Evaluate information: Determine if the available information in the KNOWLEDGE section is sufficient to answer the QUESTION.
+ 4. Formulate response: To generate a reply &lt;generated_response&gt; to the user, you must follow these rules
+ a. Find the article-chunk(s) that is most relevant to answer the user query and VERBATIM extract the ID of the article to set &lt;source_id&gt; field in the response JSON. If you are unable to find the relevant article, set &lt;source_id&gt; to NONE.
+ b. Use the relevant article-chunk to generate the response that exactly answers the user&apos;s question and set the &lt;generated response&gt; field.
+ c. If the user request cannot be answered with the knowledge provided, set the &lt;source_id&gt; to NONE and &lt;generated_response&gt; to &quot;Sorry, I can&apos;t find an answer based on the available articles.&quot;
+ 5. Refine and deliver: Ensure your response is polite, professional and concise.
+ 6. Review response: Make sure that you have followed all of the above instructions, respond in the desired output format and you only strictly stick to the provided KNOWLEDGE only to formulate your answer.
+
+ ###
+KNOWLEDGE:{!$EinsteinSearch:TestDrive_c_Home_Retriever_1Cx_uBR9ef92669.results}
+ 
+
+ ###
+QUESTION:
+{!$Input:Query}
+
+ ###
+Response:
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>Query</apiName>
+            <definition>primitive://String</definition>
+            <referenceName>Input:Query</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>RetrieverIdOrName</apiName>
+            <definition>primitive://String</definition>
+            <referenceName>Input:RetrieverIdOrName</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Draft</status>
+        <templateDataProviders>
+            <definition>invocable://getEinsteinRetrieverResults/sfdc_ai__DynamicRetriever</definition>
+            <description>A dynamic retriever is a placeholder retriever that can be referenced and resolved at run time.</description>
+            <label>Dynamic Retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>false</isRequired>
+                <parameterName>retrieverIdOrName</parameterName>
+                <valueExpression>{!$Input:RetrieverIdOrName}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression>{!$Input:Query}</valueExpression>
+            </parameters>
+            <referenceName>EinsteinSearch:sfdc_ai__DynamicRetriever</referenceName>
+        </templateDataProviders>
+        <templateDataProviders>
+            <definition>invocable://getEinsteinRetrieverResults/Test_Drive_Insights_Retriever_1Cx_uBR370a7c52</definition>
+            <label>Test Drive Insights Retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression>{!$Input:Query}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://List&lt;String&gt;</definition>
+                <isRequired>false</isRequired>
+                <parameterName>outputFieldNames</parameterName>
+                <valueExpression>[&quot;Record_ID&quot;,&quot;WhatsApp_Business_ID&quot;,&quot;Account_Id&quot;,&quot;Booking_Slot_Name&quot;,&quot;SfdcOrganizationId&quot;,&quot;Agent_Conversation_ID&quot;,&quot;Product_Id&quot;,&quot;Lead_Id&quot;,&quot;Vehicle_Id&quot;]</valueExpression>
+            </parameters>
+            <referenceName>EinsteinSearch:Test_Drive_Insights_Retriever_1Cx_uBR370a7c52</referenceName>
+        </templateDataProviders>
+        <templateDataProviders>
+            <definition>invocable://getEinsteinRetrieverResults/Lead_Retriever_1Cx_uBRc4875fcd</definition>
+            <label>Lead Retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression>{!$Input:RetrieverIdOrName}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://List&lt;String&gt;</definition>
+                <isRequired>false</isRequired>
+                <parameterName>outputFieldNames</parameterName>
+                <valueExpression>[&quot;Lead_Id&quot;,&quot;Last_Name&quot;,&quot;First_Name&quot;,&quot;Email&quot;,&quot;Data_Source&quot;,&quot;Agent_Conversation_ID&quot;,&quot;Preferred_Channel&quot;]</valueExpression>
+            </parameters>
+            <referenceName>EinsteinSearch:Lead_Retriever_1Cx_uBRc4875fcd</referenceName>
+        </templateDataProviders>
+        <templateDataProviders>
+            <definition>invocable://getEinsteinRetrieverResults/TestDrive_c_Home_Retriever_1Cx_uBR9ef92669</definition>
+            <label>TestDrive__c_Home Retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression>{!$Input:Query}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://List&lt;String&gt;</definition>
+                <isRequired>false</isRequired>
+                <parameterName>outputFieldNames</parameterName>
+                <valueExpression>[&quot;Test_Drive_Name&quot;,&quot;Dealership&quot;,&quot;Confirmation_Sent&quot;,&quot;Confirmation_Channel&quot;,&quot;Cancellation_Reason&quot;,&quot;Booking_Status&quot;,&quot;Booked_Via&quot;,&quot;Agent_Session_ID&quot;,&quot;Assigned_Agent&quot;,&quot;Lead&quot;,&quot;New_Vehicle_Name&quot;,&quot;Test_Drive_Zip_Code&quot;,&quot;Vehicle_Definition&quot;,&quot;SfdcOrganizationId&quot;]</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://Integer</definition>
+                <isRequired>false</isRequired>
+                <parameterName>resultCount</parameterName>
+                <valueExpression>10</valueExpression>
+            </parameters>
+            <referenceName>EinsteinSearch:TestDrive_c_Home_Retriever_1Cx_uBR9ef92669</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>whLLqV5u/QuwXNMotUO6WjJjqplinwUHJjhJJ6aqeho=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__knowledgeAnswers</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

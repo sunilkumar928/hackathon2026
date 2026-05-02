@@ -1,0 +1,24 @@
+{
+  "required" : [ ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "CancellationNotes" : {
+      "title" : "CancellationNotes",
+      "description" : "Cancellation Notes",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "ExistingTestDriveRecord" : {
+      "title" : "ExistingTestDriveRecord",
+      "description" : "Existing Test Drive Record",
+      "lightning:type" : "lightning__recordInfoType",
+      "lightning:sObjectInfo" : {
+        "apiName" : "TestDrive__c"
+      },
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

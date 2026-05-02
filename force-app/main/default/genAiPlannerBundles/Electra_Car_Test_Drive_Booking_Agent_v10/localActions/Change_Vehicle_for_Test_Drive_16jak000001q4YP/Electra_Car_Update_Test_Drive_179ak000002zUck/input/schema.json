@@ -1,0 +1,48 @@
+{
+  "required" : [ ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "ExistingTestDriveRecord" : {
+      "title" : "ExistingTestDriveRecord",
+      "description" : "ExistingTestDriveRecord which needs to be updated",
+      "lightning:type" : "lightning__recordInfoType",
+      "lightning:sObjectInfo" : {
+        "apiName" : "TestDrive__c"
+      },
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "PreferredDate" : {
+      "title" : "PreferredDate",
+      "description" : "Preferred Date for Test Drive",
+      "lightning:type" : "lightning__dateType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "PreferredSlot" : {
+      "title" : "PreferredSlot",
+      "description" : "PreferredSlot for Test Drive",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "ResheduleNotes" : {
+      "title" : "ResheduleNotes",
+      "description" : "Reschedule notes for the Test Drive",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "TestDriveVehicle" : {
+      "title" : "TestDriveVehicle",
+      "description" : "Newly selected vehicle for the Test Drive",
+      "lightning:type" : "lightning__recordInfoType",
+      "lightning:sObjectInfo" : {
+        "apiName" : "Vehicle"
+      },
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

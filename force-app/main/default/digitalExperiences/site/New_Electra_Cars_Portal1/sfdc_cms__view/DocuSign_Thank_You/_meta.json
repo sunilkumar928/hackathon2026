@@ -1,0 +1,5 @@
+{
+  "apiName" : "DocuSign_Thank_You",
+  "type" : "sfdc_cms__view",
+  "path" : "views"
+}

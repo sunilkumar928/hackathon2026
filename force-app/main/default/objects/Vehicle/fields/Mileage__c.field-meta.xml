@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mileage__c</fullName>
+    <description>Current odometer reading in km. Helps dealer staff select a low-mileage demo for first-time test drive customers.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Current odometer reading in km.</inlineHelpText>
+    <label>Mileage</label>
+    <precision>8</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

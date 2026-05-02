@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Creates Lead and TestDrive__c from Agentforce conversation data. Returns booking confirmation details.</description>
+    <developerName>Create_Test_Drive_Booking</developerName>
+    <invocationTarget>TestDriveBookingAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+    <localDeveloperName>Create_Test_Drive_Booking</localDeveloperName>
+    <masterLabel>Create Test Drive Booking</masterLabel>
+    <progressIndicatorMessage>Booking your test drive...</progressIndicatorMessage>
+</GenAiFunction>

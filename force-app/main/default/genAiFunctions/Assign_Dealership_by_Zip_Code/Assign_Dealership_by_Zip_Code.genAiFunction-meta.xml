@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Resolves the nearest active dealership from TerritoryMapping__mdt for the supplied zip code.</description>
+    <developerName>Assign_Dealership_by_Zip_Code</developerName>
+    <invocationTarget>DealershipRoutingAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+    <localDeveloperName>Assign_Dealership_by_Zip_Code</localDeveloperName>
+    <masterLabel>Assign Dealership by Zip Code</masterLabel>
+    <progressIndicatorMessage>Finding the nearest available Dealer....</progressIndicatorMessage>
+</GenAiFunction>

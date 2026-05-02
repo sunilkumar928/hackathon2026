@@ -1,0 +1,8 @@
+{
+  "type" : "sfdc_cms__trustedDomainsForInlineFrames",
+  "title" : "sites.ui.security.ClickjackTrustedDomains",
+  "contentBody" : {
+    "trustedDomainsForInlineFrames" : [ ]
+  },
+  "urlName" : "sites-ui-security-clickjacktrusteddomains"
+}

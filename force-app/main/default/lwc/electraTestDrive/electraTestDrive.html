@@ -1,0 +1,25 @@
+<template>
+    <div class="showroom-root">
+        <div class="header">
+            <h1>ELECTRA MOTORS</h1>
+            <p>Future of Automotive Intelligence</p>
+        </div>
+
+        <div class="car-grid">
+            <template for:each={carModels} for:item="car">
+                <div key={car.id} class="car-card">
+                    <div class="image-wrapper">
+                        <img src={car.image} alt={car.name} class="car-img">
+                    </div>
+                    <div class="info-overlay">
+                        <h2>{car.name}</h2>
+                        <span class="badge">{car.feature}</span>
+                        <button class="agent-btn" onclick={handleAgentLaunch}>
+                            BOOK WITH AGENT
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

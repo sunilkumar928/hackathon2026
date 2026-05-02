@@ -1,0 +1,360 @@
+<template>
+    <div class="portal">
+
+        <!-- ── Navigation ── -->
+        <nav class="nav">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="18" height="20" viewBox="0 0 14 18" fill="none">
+                        <path d="M8 0L1 10h6l-1 8 7-11H7L8 0z" fill="#fff"/>
+                    </svg>
+                </div>
+                <span class="logo-text">ELECTRA <span class="logo-accent">INDIA</span></span>
+            </div>
+
+            <ul class="nav-links">
+                <li class="active">Models</li>
+                <li>Compare</li>
+                <li>Charging</li>
+                <li>Dealers</li>
+                <li>Finance</li>
+            </ul>
+
+            <div class="nav-contact">
+                <div class="contact-phone">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                         stroke="#FF6B00" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.07 2.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/>
+                    </svg>
+                    <span>+91 77805 07042</span>
+                </div>
+                <a href="https://wa.me/917780507042" target="_blank" class="contact-wa">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.557 4.115 1.529 5.843L.057 23.886a.5.5 0 00.609.61l6.079-1.456A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.799 9.799 0 01-5.001-1.366l-.36-.212-3.683.882.927-3.583-.236-.369A9.785 9.785 0 012.182 12C2.182 6.578 6.578 2.182 12 2.182S21.818 6.578 21.818 12 17.422 21.818 12 21.818z"/>
+                    </svg>
+                    <span>+91 77805 07042</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- ── Indian Flag Stripe ── -->
+        <div class="flag-bar">
+            <div class="f1"></div><div class="f2"></div><div class="f3"></div>
+        </div>
+
+        <!-- ── Loading State ── -->
+        <template if:true={isLoading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading vehicles..."
+                                   size="medium" variant="brand">
+                </lightning-spinner>
+                <p class="loading-text">Fetching vehicles from Salesforce...</p>
+            </div>
+        </template>
+
+        <!-- ── Error State ── -->
+        <template if:true={hasError}>
+            <div class="error-wrap">
+                <p class="error-text">{errorMessage}</p>
+            </div>
+        </template>
+
+        <!-- ── Main Content ── -->
+        <template if:true={showContent}>
+
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-badge">Made for Bharat — {currentYear} Lineup</div>
+                <h1 class="hero-title">
+                    Electric India.<br/>
+                    <span class="hero-accent">Drive smarter. Save more.</span>
+                </h1>
+                <p class="hero-sub">
+                    {totalVehicles} vehicles available · Range in km · Prices in ₹ lakhs
+                </p>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <template for:each={filterOptions} for:item="f">
+                    <button key={f.value}
+                            class={f.pillClass}
+                            data-value={f.value}
+                            onclick={handleFilterChange}>
+                        {f.label}
+                    </button>
+                </template>
+            </div>
+
+            <!-- No Results -->
+            <template if:true={noResults}>
+                <div class="no-results">
+                    <p>No vehicles match the selected filter.</p>
+                </div>
+            </template>
+
+            <!-- Car Grid -->
+            <template if:false={noResults}>
+                <div class="car-grid">
+                    <template for:each={displayedVehicles} for:item="v">
+                        <div key={v.id}
+                             class={v.tileClass}
+                             data-id={v.id}
+                             onmouseenter={handleHoverIn}
+                             onmouseleave={handleHoverOut}>
+
+                            <!-- ── Tile Front ── -->
+                            <div class={v.frontClass}>
+                                <div class="car-img-area" style={v.imgBg}>
+                                    <!-- Car illustration -->
+                                    <div class="car-illustration">
+                                        <svg class="car-svg" viewBox="0 0 148 72" fill="none">
+                                            <rect x="10" y="24" width="128" height="28"
+                                                  rx="5" style={v.carBodyStyle}/>
+                                            <path style={v.carRoofStyle}
+                                                  d="M24 24Q30 8 48 7L100 7Q118 8 124 24Z"/>
+                                            <circle cx="32" cy="52" r="9"
+                                                    fill="#111" style={v.wheelStrokeStyle}
+                                                    stroke-width="1.5"/>
+                                            <circle cx="32" cy="52" r="4.5"
+                                                    style={v.wheelHubStyle}/>
+                                            <circle cx="116" cy="52" r="9"
+                                                    fill="#111" style={v.wheelStrokeStyle}
+                                                    stroke-width="1.5"/>
+                                            <circle cx="116" cy="52" r="4.5"
+                                                    style={v.wheelHubStyle}/>
+                                            <rect x="124" y="28" width="11" height="7"
+                                                  rx="2" style={v.headlightStyle}/>
+                                            <rect x="13" y="28" width="11" height="7"
+                                                  rx="2" style={v.taillightStyle}/>
+                                        </svg>
+                                    </div>
+
+                                    <!-- Image from VehicleDefinition.Image_URL__c -->
+                                    <template if:true={v.hasImage}>
+                                        <img src={v.imageUrl}
+                                             alt={v.modelName}
+                                             class="car-image"
+                                             onerror={handleImageError}
+                                             data-id={v.id}/>
+                                    </template>
+
+                                    <span class={v.badgeClass}>{v.fuelSource}</span>
+
+                                    <!-- Test Drive Badge -->
+                                    <template if:true={v.testDriveAvailable}>
+                                        <span class="test-drive-badge">Test Drive</span>
+                                    </template>
+                                </div>
+
+                                <div class="tile-info">
+                                    <div>
+                                        <div class="tile-model">{v.modelName}</div>
+                                        <div class="tile-variant">{v.variantName}</div>
+                                        <div class="tile-tagline">{v.tagline}</div>
+                                        <div class="tile-price">{v.priceDisplay}</div>
+                                    </div>
+                                    <div class="quick-stats">
+                                        <div class="qs">
+                                            <div class="qs-val">{v.rangeKm}</div>
+                                            <div class="qs-lbl">Range</div>
+                                        </div>
+                                        <div class="qs">
+                                            <div class="qs-val">{v.acceleration}</div>
+                                            <div class="qs-lbl">0–100</div>
+                                        </div>
+                                        <div class="qs">
+                                            <div class="qs-val">{v.batteryCapacity}</div>
+                                            <div class="qs-lbl">Battery</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ── Tile Back (Hover) ── -->
+                            <div class={v.backClass}>
+                                <div class="bk-head">
+                                    <span class="bk-model">{v.modelName}</span>
+                                    <span class="bk-price">{v.priceDisplay}</span>
+                                </div>
+
+                                <!-- Specs from VehicleDefinition__c -->
+                                <div class="specs-grid">
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Motor Type</div>
+                                        <div class="spec-val">{v.drivetrainSystem}</div>
+                                    </div>
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Total Power</div>
+                                        <div class="spec-val">{v.totalPower}</div>
+                                    </div>
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Max Torque</div>
+                                        <div class="spec-val">{v.maxTorque}</div>
+                                    </div>
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Top Speed</div>
+                                        <div class="spec-val">{v.topSpeed}</div>
+                                    </div>
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Battery Type</div>
+                                        <div class="spec-val">{v.batteryType}</div>
+                                    </div>
+                                    <div class="spec-box">
+                                        <div class="spec-lbl">Seats</div>
+                                        <div class="spec-val">{v.seats}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Range Bar -->
+                                <div class="range-wrap">
+                                    <div class="range-lbl">
+                                        <span>Range (ARAI)</span>
+                                        <span>{v.rangeKm}</span>
+                                    </div>
+                                    <div class="range-track">
+                                        <div class="range-fill" style={v.rangeFillStyle}></div>
+                                    </div>
+                                </div>
+
+                                <!-- Vehicle Info from Vehicle__c -->
+                                <div class="vehicle-meta">
+                                    <span class="meta-item">
+                                        <span class="meta-lbl">Colour:</span>
+                                        <span class="meta-val">{v.exteriorColor}</span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <span class="meta-lbl">Year:</span>
+                                        <span class="meta-val">{v.modelYear}</span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <span class="meta-lbl">Status:</span>
+                                        <span class="meta-val">{v.status}</span>
+                                    </span>
+                                    <template if:true={v.showroomName}>
+                                        <span class="meta-item">
+                                            <span class="meta-lbl">Showroom:</span>
+                                            <span class="meta-val">{v.showroomName}</span>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                <!-- Feature chips -->
+                                <div class="chips">
+                                    <template for:each={v.featureChips} for:item="chip">
+                                        <span key={chip} class="chip">{chip}</span>
+                                    </template>
+                                </div>
+
+                                <!-- <div class="cta-row">
+                                    <button class="btn-p"
+                                            data-id={v.id}
+                                            data-model={v.modelName}
+                                            onclick={handleBookNow}>
+                                        Book Now
+                                    </button>
+                                    <template if:true={v.testDriveAvailable}>
+                                        <button class="btn-o"
+                                                data-id={v.id}
+                                                data-model={v.modelName}
+                                                onclick={handleTestDrive}>
+                                            Test Drive
+                                        </button>
+                                    </template>
+                                    <button class="btn-o"
+                                            data-id={v.id}
+                                            onclick={handleViewDetails}>
+                                        View Details
+                                    </button>
+                                </div> -->
+                            </div>
+
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Hint row -->
+            <div class="hint-row">
+                <div class="hint-dot"></div>
+                <span class="hint-text">Hover any tile to see full specifications</span>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <template for:each={portalStats} for:item="s">
+                    <div key={s.label} class="sb-item">
+                        <div class="sb-val">{s.value}</div>
+                        <div class="sb-lbl">{s.label}</div>
+                    </div>
+                </template>
+            </div>
+
+        </template><!-- end showContent -->
+
+        <!-- ── Contact Strip ── -->
+        <div class="contact-strip">
+            <div class="cs-left">
+                <div class="cs-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="#FF6B00" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.07 2.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="cs-text">Talk to our EV experts</div>
+                    <div class="cs-sub">Mon – Sat, 9 AM – 7 PM IST</div>
+                </div>
+            </div>
+            <div class="cs-actions">
+                <a href="tel:+917780507042" class="ca-phone">
+                    <svg width="15" height="15" viewBox="0 0 24 24"
+                         fill="none" stroke="#FF6B00" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.07 2.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92v2z"/>
+                    </svg>
+                    <span>+91 77805 07042</span>
+                </a>
+                <a href="https://wa.me/917780507042" target="_blank" class="ca-wa">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#25D366">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.557 4.115 1.529 5.843L.057 23.886a.5.5 0 00.609.61l6.079-1.456A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.799 9.799 0 01-5.001-1.366l-.36-.212-3.683.882.927-3.583-.236-.369A9.785 9.785 0 012.182 12C2.182 6.578 6.578 2.182 12 2.182S21.818 6.578 21.818 12 17.422 21.818 12 21.818z"/>
+                    </svg>
+                    <span>+91 77805 07042</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── Disclaimer ── -->
+        <div class="disclaimer">
+            <div class="disc-title">Disclaimer</div>
+            <div class="disc-text">
+                All vehicle prices shown are indicative ex-showroom prices for select Indian
+                cities and are subject to change without notice. Range figures are based on
+                ARAI-certified test conditions — actual real-world range may vary by 20–35%
+                depending on driving style, road conditions, ambient temperature, AC usage,
+                battery age, and payload. Prices exclude registration, insurance, and
+                applicable state taxes/GST. FAME-II subsidy and state EV incentives may reduce
+                final on-road cost. Electra India is an information and comparison platform
+                and is not the manufacturer or authorised dealer of any vehicle listed.
+                All brand names and trademarks are property of their respective owners.
+                Please contact your nearest authorised dealership for confirmed pricing
+                and availability. Vehicle data is sourced live from Salesforce and may
+                reflect real-time inventory.
+            </div>
+        </div>
+
+        <!-- ── Footer ── -->
+        <div class="footer">
+            <span class="footer-logo">ELECTRA <span class="logo-accent">INDIA</span></span>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Use</a>
+                <a href="#" class="footer-link">Dealer Login</a>
+                <a href="#" class="footer-link">Sitemap</a>
+            </div>
+            <span class="footer-copy">© {currentYear} Electra India. All rights reserved.</span>
+        </div>
+
+    </div>
+</template>

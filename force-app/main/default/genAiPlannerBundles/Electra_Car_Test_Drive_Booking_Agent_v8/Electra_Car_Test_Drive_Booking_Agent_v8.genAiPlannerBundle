@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues.</description>
+    <localTopicLinks>
+        <genAiPluginName>Book_Test_Drive_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Change_Vehicle_for_Test_Drive_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Explore_Vehicles_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Modify_Booking_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>escalation_16jak000001pa5h</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Modify_Booking_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Handles updates to existing bookings or test drives, including: reschedule (change/move test drive time), cancel reservation/booking, update details, and confirm booking status.</description>
+        <developerName>Modify_Booking_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002yZeY</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeY</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Get_Today_Date_179ak000002yZeY</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Update_Test_Drive_179ak000002yZeY</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeY</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Is_Booking_Slots_Available_179ak000002yZeY</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Cancel_Test_Drive_179ak000002yZeY</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Electra_Car_Cancel_Test_Drive_179ak000002yZeY</fullName>
+            <description>This action used to cancel the Existing Test Drive</description>
+            <developerName>Electra_Car_Cancel_Test_Drive_179ak000002yZeY</developerName>
+            <invocationTarget>Electra_Car_Cancel_Test_Drive_Booking</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Cancel_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Cancel Test Drive</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Get_Today_Date_179ak000002yZeY</fullName>
+            <description>This action used to get the Today&apos;s date</description>
+            <developerName>Get_Today_Date_179ak000002yZeY</developerName>
+            <invocationTarget>Electra_Car_Get_Today_Date</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Today_Date</localDeveloperName>
+            <masterLabel>Get Today Date</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Is_Booking_Slots_Available_179ak000002yZeY</fullName>
+            <description>This action will check whether booking slots are filled for the preferred slot or not</description>
+            <developerName>Is_Booking_Slots_Available_179ak000002yZeY</developerName>
+            <invocationTarget>Electra_Car_Booking_Slots_Available</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Is_Booking_Slots_Available</localDeveloperName>
+            <masterLabel>Is Booking Slots Available</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Car_Update_Test_Drive_179ak000002yZeY</fullName>
+            <description>This action used to update the Existing Drive</description>
+            <developerName>Electra_Car_Update_Test_Drive_179ak000002yZeY</developerName>
+            <invocationTarget>Electra_Car_Update_Test_Drive</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Update_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Update Test Drive</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeY</fullName>
+            <description>This action used to get the existing Test drive details</description>
+            <developerName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeY</developerName>
+            <invocationTarget>Electra_Car_Get_Test_Drive</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Get_Existing_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Get Existing Test Drive</masterLabel>
+        </localActions>
+        <localDeveloperName>Modify_Booking</localDeveloperName>
+        <masterLabel>Modify Booking</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>agent_router_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the user and determine the appropriate subagent based on user input</description>
+        <developerName>agent_router_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.
+
+{{state.AgentScriptInternal_agent_instructions}}</description>
+            <developerName>instruction0_179ak000002yZeX</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeX</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Agent Router</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Change_Vehicle_for_Test_Drive_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Use this topic Whenever user want to change the vehicle for Test drive</description>
+        <developerName>Change_Vehicle_for_Test_Drive_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002yZeW</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeW</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Get_Today_Date_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Update_Test_Drive_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Cancel_Test_Drive_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Showroom_vehicles_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Is_Booking_Slots_Available_179ak000002yZeW</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Showroom_vehicles_179ak000002yZeW</fullName>
+            <description>This action used to get the showroom vehicles</description>
+            <developerName>Get_Showroom_vehicles_179ak000002yZeW</developerName>
+            <invocationTarget>Get_Showroom_Vehicle_Records</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Showroom_vehicles</localDeveloperName>
+            <masterLabel>Get Showroom vehicles</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Get_Today_Date_179ak000002yZeW</fullName>
+            <description>This action used to get the Today&apos;s date</description>
+            <developerName>Get_Today_Date_179ak000002yZeW</developerName>
+            <invocationTarget>Electra_Car_Get_Today_Date</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Today_Date</localDeveloperName>
+            <masterLabel>Get Today Date</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeW</fullName>
+            <description>This action used to get the existing Test drive details</description>
+            <developerName>Electra_Car_Get_Existing_Test_Drive_179ak000002yZeW</developerName>
+            <invocationTarget>Electra_Car_Get_Test_Drive</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Get_Existing_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Get Existing Test Drive</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Car_Update_Test_Drive_179ak000002yZeW</fullName>
+            <description>This action used to update the Existing Drive</description>
+            <developerName>Electra_Car_Update_Test_Drive_179ak000002yZeW</developerName>
+            <invocationTarget>Electra_Car_Update_Test_Drive</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Update_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Update Test Drive</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Is_Booking_Slots_Available_179ak000002yZeW</fullName>
+            <description>This action will check whether booking slots are filled for the preferred slot or not</description>
+            <developerName>Is_Booking_Slots_Available_179ak000002yZeW</developerName>
+            <invocationTarget>Electra_Car_Booking_Slots_Available</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Is_Booking_Slots_Available</localDeveloperName>
+            <masterLabel>Is Booking Slots Available</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Car_Cancel_Test_Drive_179ak000002yZeW</fullName>
+            <description>This action used to cancel the Existing Test Drive</description>
+            <developerName>Electra_Car_Cancel_Test_Drive_179ak000002yZeW</developerName>
+            <invocationTarget>Electra_Car_Cancel_Test_Drive_Booking</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Car_Cancel_Test_Drive</localDeveloperName>
+            <masterLabel>Electra Car Cancel Test Drive</masterLabel>
+        </localActions>
+        <localDeveloperName>Change_Vehicle_for_Test_Drive</localDeveloperName>
+        <masterLabel>Change Vehicle for Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>escalation_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Handles requests from users who want to transfer or escalate their conversation to a live human agent.</description>
+        <developerName>escalation_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002yZeV</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeV</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>escalation</localDeveloperName>
+        <masterLabel>Escalate To Human</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Book_Test_Drive_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>When the customer wants to book a test drive at first search for existing test drives on user&apos;s name then proceed to book a test drive.</description>
+        <developerName>Book_Test_Drive_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002yZeU</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeU</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Check_Duplicate_Test_Drive_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Docusign_Create_Envelope_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Docusign_Generate_Signing_URL_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Docusign_Check_Signing_Status_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Showroom_Vehicles_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Electra_Create_Test_Drive_Booking_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Today_Date_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Assign_Dealership_by_Zip_Code_179ak000002yZeU</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Showroom_Vehicles_179ak000002yZeU</fullName>
+            <description>gets  vehicles which are available in Showroom</description>
+            <developerName>Get_Showroom_Vehicles_179ak000002yZeU</developerName>
+            <invocationTarget>Get_Showroom_Vehicle_Records</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Showroom_Vehicles</localDeveloperName>
+            <masterLabel>Get Showroom Vehicles</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Assign_Dealership_by_Zip_Code_179ak000002yZeU</fullName>
+            <description>Resolves the nearest active dealership from TerritoryMapping__mdt for the supplied zip code.</description>
+            <developerName>Assign_Dealership_by_Zip_Code_179ak000002yZeU</developerName>
+            <invocationTarget>DealershipRoutingAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Assign_Dealership_by_Zip_Code</localDeveloperName>
+            <masterLabel>Assign Dealership by Zip Code</masterLabel>
+            <progressIndicatorMessage>Finding the nearest available Dealer....</progressIndicatorMessage>
+            <source>Assign_Dealership_by_Zip_Code</source>
+        </localActions>
+        <localActions>
+            <fullName>Check_Duplicate_Test_Drive_179ak000002yZeU</fullName>
+            <description>Checks if there are existing active test drive bookings for a given email or phone.</description>
+            <developerName>Check_Duplicate_Test_Drive_179ak000002yZeU</developerName>
+            <invocationTarget>CheckDuplicateBookingAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Check_Duplicate_Test_Drive</localDeveloperName>
+            <masterLabel>Check Duplicate Test Drive</masterLabel>
+            <progressIndicatorMessage>checking for the existing test drive bookings..</progressIndicatorMessage>
+            <source>Check_Duplicate_Test_Drive</source>
+        </localActions>
+        <localActions>
+            <fullName>Docusign_Create_Envelope_179ak000002yZeU</fullName>
+            <description>Creates a Docusign envelope for the NDA process.</description>
+            <developerName>Docusign_Create_Envelope_179ak000002yZeU</developerName>
+            <invocationTarget>DocusignCreateEnvelopeInvocable</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Docusign_Create_Envelope</localDeveloperName>
+            <masterLabel>Docusign Create Envelope</masterLabel>
+            <progressIndicatorMessage>creating the envelope..</progressIndicatorMessage>
+            <source>Docusign_Create_Envelope</source>
+        </localActions>
+        <localActions>
+            <fullName>Electra_Create_Test_Drive_Booking_179ak000002yZeU</fullName>
+            <description>Creates Lead and TestDrive__c from Agentforce conversation data. Returns booking confirmation details.</description>
+            <developerName>Electra_Create_Test_Drive_Booking_179ak000002yZeU</developerName>
+            <invocationTarget>NewElectraTestDriveBookAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Electra_Create_Test_Drive_Booking</localDeveloperName>
+            <masterLabel>Create Test Drive Booking</masterLabel>
+            <progressIndicatorMessage>Booking your test drive....</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>Get_Today_Date_179ak000002yZeU</fullName>
+            <description>Get today&apos;s date for normalization</description>
+            <developerName>Get_Today_Date_179ak000002yZeU</developerName>
+            <invocationTarget>Electra_Car_Get_Today_Date</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Today_Date</localDeveloperName>
+            <masterLabel>Get Today Date</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Docusign_Check_Signing_Status_179ak000002yZeU</fullName>
+            <description>Checks if the user has completed signing the envelope.</description>
+            <developerName>Docusign_Check_Signing_Status_179ak000002yZeU</developerName>
+            <invocationTarget>DocusignGetStatusInvocable</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Docusign_Check_Signing_Status</localDeveloperName>
+            <masterLabel>Docusign Check Signing Status</masterLabel>
+            <progressIndicatorMessage>Checking the signing status..</progressIndicatorMessage>
+            <source>Docusign_Check_Signing_Status</source>
+        </localActions>
+        <localActions>
+            <fullName>Docusign_Generate_Signing_URL_179ak000002yZeU</fullName>
+            <description>Generates a signing link for an existing envelope.</description>
+            <developerName>Docusign_Generate_Signing_URL_179ak000002yZeU</developerName>
+            <invocationTarget>DocusignCreateSigningUrlInvocable</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Docusign_Generate_Signing_URL</localDeveloperName>
+            <masterLabel>Docusign Generate Signing URL</masterLabel>
+            <progressIndicatorMessage>generating the singing link..</progressIndicatorMessage>
+            <source>Docusign_Generate_Signing_URL</source>
+        </localActions>
+        <localDeveloperName>Book_Test_Drive</localDeveloperName>
+        <masterLabel>Book Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Explore_Vehicles_16jak000001pa5h</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Use this to search the car catalog and provide specific details, specs, or availability for individual car models.</description>
+        <developerName>Explore_Vehicles_16jak000001pa5h</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002yZeT</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002yZeT</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Get_Vehicle_Details_179ak000002yZeT</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Showroom_Vehicles_179ak000002yZeT</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Search_Vehicle_Catalog_179ak000002yZeT</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Display_Vehicle_Details_179ak000002yZeT</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Showroom_Vehicles_179ak000002yZeT</fullName>
+            <description>gets all vehicles which are available in Showroom</description>
+            <developerName>Get_Showroom_Vehicles_179ak000002yZeT</developerName>
+            <invocationTarget>Get_Showroom_Vehicle_Records</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Showroom_Vehicles</localDeveloperName>
+            <masterLabel>Get Showroom Vehicles</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Display_Vehicle_Details_179ak000002yZeT</fullName>
+            <description>Queries the database for available vehicles based on model name or Id (expects vehicleId).</description>
+            <developerName>Display_Vehicle_Details_179ak000002yZeT</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Display_Vehicle_Details</localDeveloperName>
+            <masterLabel>Display Vehicle Details</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Search_Vehicle_Catalog_179ak000002yZeT</fullName>
+            <description>Fetches a list of available vehicles based on general criteria like model or type.</description>
+            <developerName>Search_Vehicle_Catalog_179ak000002yZeT</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Search_Vehicle_Catalog</localDeveloperName>
+            <masterLabel>Search Vehicle Catalog</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Get_Vehicle_Details_179ak000002yZeT</fullName>
+            <description>get specific vehicle Definition</description>
+            <developerName>Get_Vehicle_Details_179ak000002yZeT</developerName>
+            <invocationTarget>Compare_Vehicles</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Vehicle_Details</localDeveloperName>
+            <masterLabel>Get Vehicle Details</masterLabel>
+        </localActions>
+        <localDeveloperName>Explore_Vehicles</localDeveloperName>
+        <masterLabel>Explore Vehicles</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Electra Car Test Drive Booking Agent</masterLabel>
+    <plannerSurfaces>
+        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+        <callRecordingAllowed>false</callRecordingAllowed>
+        <outboundRouteConfigs>
+            <escalationMessage>One moment, I&apos;m transferring our conversation to get you more help.</escalationMessage>
+            <outboundRouteName>Test_Drive_Route_to_Queue</outboundRouteName>
+            <outboundRouteType>OmniChannelFlow</outboundRouteType>
+        </outboundRouteConfigs>
+        <surface>SurfaceAction__Messaging</surface>
+        <surfaceType>Messaging</surfaceType>
+    </plannerSurfaces>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

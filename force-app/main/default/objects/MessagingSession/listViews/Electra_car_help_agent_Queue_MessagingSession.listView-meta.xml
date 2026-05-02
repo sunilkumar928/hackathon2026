@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Electra_car_help_agent_Queue_MessagingSession</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Electra car help agent Queue</label>
+    <queue>Electra_car_help_agent_Queue</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

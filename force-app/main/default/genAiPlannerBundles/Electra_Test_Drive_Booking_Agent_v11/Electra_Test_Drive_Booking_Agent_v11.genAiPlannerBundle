@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues.</description>
+    <localTopicLinks>
+        <genAiPluginName>Book_Test_Drive_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Duplicate_Test_Drive_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Escalate_To_Human_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Explore_Vehicles_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Modify_Booking_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jak000001kytS</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Book_Test_Drive_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>When the customer wants to book a test drive or schedule a test drive</description>
+        <developerName>Book_Test_Drive_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kG</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kG</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Assign_Dealership_by_Zip_Code_179ak000002o6kG</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Create_Test_Drive_Booking_179ak000002o6kG</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Assign_Dealership_by_Zip_Code_179ak000002o6kG</fullName>
+            <description>Resolves the nearest active dealership from TerritoryMapping__mdt for the supplied zip code.</description>
+            <developerName>Assign_Dealership_by_Zip_Code_179ak000002o6kG</developerName>
+            <invocationTarget>DealershipRoutingAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Assign_Dealership_by_Zip_Code</localDeveloperName>
+            <masterLabel>Assign Dealership by Zip Code</masterLabel>
+            <progressIndicatorMessage>Finding the nearest available Dealer....</progressIndicatorMessage>
+            <source>Assign_Dealership_by_Zip_Code</source>
+        </localActions>
+        <localActions>
+            <fullName>Create_Test_Drive_Booking_179ak000002o6kG</fullName>
+            <description>Creates Lead and TestDrive__c from Agentforce conversation data. Returns booking confirmation details.</description>
+            <developerName>Create_Test_Drive_Booking_179ak000002o6kG</developerName>
+            <invocationTarget>TestDriveBookingAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Create_Test_Drive_Booking</localDeveloperName>
+            <masterLabel>Create Test Drive Booking</masterLabel>
+            <progressIndicatorMessage>Booking your test drive....</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>Book_Test_Drive</localDeveloperName>
+        <masterLabel>Book Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>agent_router_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the user and determine the appropriate subagent based on user input</description>
+        <developerName>agent_router_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kH</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kH</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Agent Router</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Explore_Vehicles_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Use this to search the vehicle catalog and provide specific details, specs, or availability for individual vehicle models.</description>
+        <developerName>Explore_Vehicles_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kE</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kE</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Display_Vehicle_Details_179ak000002o6kE</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Search_Vehicle_Catalog_179ak000002o6kE</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Search_Vehicle_Catalog_179ak000002o6kE</fullName>
+            <description>Fetches a list of available vehicles based on general criteria like model or type.</description>
+            <developerName>Search_Vehicle_Catalog_179ak000002o6kE</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Search_Vehicle_Catalog</localDeveloperName>
+            <masterLabel>Search Vehicle Catalog</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Display_Vehicle_Details_179ak000002o6kE</fullName>
+            <description>Queries the database for available vehicles based on model name.</description>
+            <developerName>Display_Vehicle_Details_179ak000002o6kE</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Display_Vehicle_Details</localDeveloperName>
+            <masterLabel>Display Vehicle Details</masterLabel>
+        </localActions>
+        <localDeveloperName>Explore_Vehicles</localDeveloperName>
+        <masterLabel>Explore Vehicles</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Escalate_To_Human_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Connecting with a human live agent</description>
+        <developerName>Escalate_To_Human_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kF</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kF</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Escalate_To_Human</localDeveloperName>
+        <masterLabel>Escalate To Human</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Duplicate_Test_Drive_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Check the existing records for the customer and show them if the booking status is not completed</description>
+        <developerName>Duplicate_Test_Drive_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kI</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kI</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Duplicate_Test_Drive</localDeveloperName>
+        <masterLabel>Duplicate Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Modify_Booking_16jak000001kytS</fullName>
+        <canEscalate>false</canEscalate>
+        <description>change my appointment, reschedule, cancel my test drive, or confirm the status</description>
+        <developerName>Modify_Booking_16jak000001kytS</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179ak000002o6kD</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o6kD</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Cancel_Test_Drive_179ak000002o6kD</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Update_Existing_Test_Drive_Record_179ak000002o6kD</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Get_Existing_Test_Drive_Details_179ak000002o6kD</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Existing_Test_Drive_Details_179ak000002o6kD</fullName>
+            <description>If the user enquires about confirmation, reshedule or cancel the existing test drive use this action to fetch the existing test drive details.</description>
+            <developerName>Get_Existing_Test_Drive_Details_179ak000002o6kD</developerName>
+            <invocationTarget>Get_Existing_Test_Drive_Details</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Existing_Test_Drive_Details</localDeveloperName>
+            <masterLabel>Get Existing Test Drive Details</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Update_Existing_Test_Drive_Record_179ak000002o6kD</fullName>
+            <description>This action used to update the existing test drive record</description>
+            <developerName>Update_Existing_Test_Drive_Record_179ak000002o6kD</developerName>
+            <invocationTarget>Update_Test_Drive</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Update_Existing_Test_Drive_Record</localDeveloperName>
+            <masterLabel>Update Existing Test Drive Record</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Cancel_Test_Drive_179ak000002o6kD</fullName>
+            <description>This action used to cancel the drive</description>
+            <developerName>Cancel_Test_Drive_179ak000002o6kD</developerName>
+            <invocationTarget>Cancel_Test_Drive_Booking</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Cancel_Test_Drive</localDeveloperName>
+            <masterLabel>Cancel Test Drive</masterLabel>
+        </localActions>
+        <localDeveloperName>Modify_Booking</localDeveloperName>
+        <masterLabel>Modify Booking</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Electra Test Drive Booking Agent</masterLabel>
+    <plannerSurfaces>
+        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+        <callRecordingAllowed>false</callRecordingAllowed>
+        <outboundRouteConfigs>
+            <escalationMessage>One moment, I&apos;m transferring our conversation to get you more help.</escalationMessage>
+            <outboundRouteName>Test_Drive_Route_to_Queue</outboundRouteName>
+            <outboundRouteType>OmniChannelFlow</outboundRouteType>
+        </outboundRouteConfigs>
+        <surface>SurfaceAction__Messaging</surface>
+        <surfaceType>Messaging</surfaceType>
+    </plannerSurfaces>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

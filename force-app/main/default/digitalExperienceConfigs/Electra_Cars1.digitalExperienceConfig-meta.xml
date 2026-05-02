@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DigitalExperienceConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Electra Cars</label>
+    <site>
+        <urlPathPrefix>electracars</urlPathPrefix>
+    </site>
+    <space>site/Electra_Cars1</space>
+</DigitalExperienceConfig>

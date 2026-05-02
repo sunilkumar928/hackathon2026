@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues.</description>
+    <localTopicLinks>
+        <genAiPluginName>AccountManagement_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Book_Test_Drive_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Confirm_Booking_Status_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Duplicate_Test_Drive_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Escalate_To_Human_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Explore_Vehicles_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>Modify_Booking_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jak000001kzSv</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Duplicate_Test_Drive_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Check the existing records for the customer and show them if the booking status is not completed</description>
+        <developerName>Duplicate_Test_Drive_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5ct</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5ct</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Duplicate_Test_Drive</localDeveloperName>
+        <masterLabel>Duplicate Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Explore_Vehicles_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Use this to search the vehicle catalog and provide specific details, specs, or availability for individual vehicle models.</description>
+        <developerName>Explore_Vehicles_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cu</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cu</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Display_Vehicle_Details_179ak000002o5cu</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Search_Vehicle_Catalog_179ak000002o5cu</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Search_Vehicle_Catalog_179ak000002o5cu</fullName>
+            <description>Fetches a list of available vehicles based on general criteria like model or type.</description>
+            <developerName>Search_Vehicle_Catalog_179ak000002o5cu</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Search_Vehicle_Catalog</localDeveloperName>
+            <masterLabel>Search Vehicle Catalog</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Display_Vehicle_Details_179ak000002o5cu</fullName>
+            <description>Queries the database for available vehicles based on model name.</description>
+            <developerName>Display_Vehicle_Details_179ak000002o5cu</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Display_Vehicle_Details</localDeveloperName>
+            <masterLabel>Display Vehicle Details</masterLabel>
+        </localActions>
+        <localDeveloperName>Explore_Vehicles</localDeveloperName>
+        <masterLabel>Explore Vehicles</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>AccountManagement_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Handles customer inquiries about changing their contact information and resetting their password.</description>
+        <developerName>AccountManagement_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cr</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cr</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>UpdateVerifiedContact_179ak000002o5cr</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>ResetSecurePassword_179ak000002o5cr</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>AnswerQuestionsWithKnowledge_179ak000002o5cr</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>AnswerQuestionsWithKnowledge_179ak000002o5cr</fullName>
+            <description>Answers questions about company policies and procedures, troubleshooting steps, or product information. For example: &apos;What is your return policy?&apos; &apos;How do I fix an issue?&apos; or &apos;What features does a product have?&apos;</description>
+            <developerName>AnswerQuestionsWithKnowledge_179ak000002o5cr</developerName>
+            <invocationTarget>streamKnowledgeSearch</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>AnswerQuestionsWithKnowledge</localDeveloperName>
+            <masterLabel>Answer Questions with Knowledge</masterLabel>
+            <progressIndicatorMessage>Getting answers</progressIndicatorMessage>
+            <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
+        </localActions>
+        <localActions>
+            <fullName>UpdateVerifiedContact_179ak000002o5cr</fullName>
+            <description>Updates fields on a customer’s contact record, such as the email address, phone number, or postal address.</description>
+            <developerName>UpdateVerifiedContact_179ak000002o5cr</developerName>
+            <invocationTarget>SvcCopilotTmpl__UpdateVrfyCtct</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>true</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>UpdateVerifiedContact</localDeveloperName>
+            <masterLabel>Update Verified Contact</masterLabel>
+            <source>SvcCopilotTmpl__UpdateVerifiedContact</source>
+        </localActions>
+        <localActions>
+            <fullName>ResetSecurePassword_179ak000002o5cr</fullName>
+            <description>Send a password reset link to the email address associated with the given Contact ID.</description>
+            <developerName>ResetSecurePassword_179ak000002o5cr</developerName>
+            <invocationTarget>SvcCopilotTmpl__ResetScrPassword</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>true</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>ResetSecurePassword</localDeveloperName>
+            <masterLabel>Reset Secure Password</masterLabel>
+            <source>SvcCopilotTmpl__ResetSecurePassword</source>
+        </localActions>
+        <localDeveloperName>AccountManagement</localDeveloperName>
+        <masterLabel>Account Management</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Confirm_Booking_Status_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>is my booking confirmed, what&apos;s my appointment</description>
+        <developerName>Confirm_Booking_Status_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cs</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cs</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Confirm_Booking_Status</localDeveloperName>
+        <masterLabel>Confirm Booking Status</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Modify_Booking_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>change my appointment, reschedule, cancel my test drive</description>
+        <developerName>Modify_Booking_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cx</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cx</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Modify_Booking</localDeveloperName>
+        <masterLabel>Modify Booking</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>agent_router_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the user and determine the appropriate subagent based on user input</description>
+        <developerName>agent_router_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cy</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cy</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Agent Router</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Escalate_To_Human_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Connecting with a human live agent</description>
+        <developerName>Escalate_To_Human_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cv</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cv</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Escalate_To_Human</localDeveloperName>
+        <masterLabel>Escalate To Human</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Book_Test_Drive_16jak000001kzSv</fullName>
+        <canEscalate>false</canEscalate>
+        <description>When the customer wants to book a test drive or schedule a test drive</description>
+        <developerName>Book_Test_Drive_16jak000001kzSv</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5cw</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5cw</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>Book_Test_Drive</localDeveloperName>
+        <masterLabel>Book Test Drive</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Test Drive Service Agent</masterLabel>
+    <plannerSurfaces>
+        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+        <callRecordingAllowed>false</callRecordingAllowed>
+        <outboundRouteConfigs>
+            <escalationMessage>One moment, I&apos;m transferring our conversation to get you more help.</escalationMessage>
+            <outboundRouteName>Test_Drive_Route_to_Queue</outboundRouteName>
+            <outboundRouteType>OmniChannelFlow</outboundRouteType>
+        </outboundRouteConfigs>
+        <surface>SurfaceAction__Messaging</surface>
+        <surfaceType>Messaging</surfaceType>
+    </plannerSurfaces>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

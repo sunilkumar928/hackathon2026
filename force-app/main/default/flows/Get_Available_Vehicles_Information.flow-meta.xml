@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Verify_Input</name>
+        <label>Verify Input</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Get_All_Available_Vehicles</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Fetch All</defaultConnectorLabel>
+        <rules>
+            <name>Specific_Model_Requested</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varVehicleModelInput</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Requested_Vehicles</targetReference>
+            </connector>
+            <label>Specific Model Requested</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Get Available Vehicles Information {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Get Available Vehicles Information</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_All_Available_Vehicles</name>
+        <label>Get All Available Vehicles</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <filterLogic>1 OR 2 OR 3</filterLogic>
+        <filters>
+            <field>Is_Test_Drive_Available__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Active</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Reserved for Test Drive</stringValue>
+            </value>
+        </filters>
+        <object>Vehicle</object>
+        <outputReference>out_VehicleList</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>DrivetrainSystem</queriedFields>
+        <queriedFields>ExteriorColor</queriedFields>
+        <queriedFields>Is_Test_Drive_Available__c</queriedFields>
+        <queriedFields>ModelYear</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Requested_Vehicles</name>
+        <label>Get Requested Vehicles</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Is_Test_Drive_Available__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Name</field>
+            <operator>Contains</operator>
+            <value>
+                <elementReference>varVehicleModelInput</elementReference>
+            </value>
+        </filters>
+        <object>Vehicle</object>
+        <outputReference>out_VehicleList</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>DrivetrainSystem</queriedFields>
+        <queriedFields>ExteriorColor</queriedFields>
+        <queriedFields>Is_Test_Drive_Available__c</queriedFields>
+        <queriedFields>ModelYear</queriedFields>
+    </recordLookups>
+    <runInMode>DefaultMode</runInMode>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Verify_Input</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>out_VehicleList</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Vehicle</objectType>
+    </variables>
+    <variables>
+        <description>This allows Agentforce to pass the specific model name into the Flow.</description>
+        <name>varVehicleModelInput</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>NDA_TestDrive_IN</label>
+    <protected>false</protected>
+    <values>
+        <field>Long_Text_Area_Value__c</field>
+        <value xsi:type="xsd:string">{ &quot;templateId&quot;:&quot;019e1b27-2294-4ed3-beff-bc36d90923d2&quot;, &quot;templateRole&quot;:&quot;Authorized Signatory&quot;}</value>
+    </values>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">{ &quot;templateId&quot;:&quot;019e1b27-2294-4ed3-beff-bc36d90923d2&quot;, &quot;templateRole&quot;:&quot;Authorized Signatory&quot;}</value>
+    </values>
+</CustomMetadata>

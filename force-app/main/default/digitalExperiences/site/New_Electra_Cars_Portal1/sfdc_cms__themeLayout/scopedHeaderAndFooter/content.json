@@ -1,0 +1,91 @@
+{
+  "type" : "sfdc_cms__themeLayout",
+  "title" : "Scoped Header and Footer",
+  "contentBody" : {
+    "component" : {
+      "attributes" : {
+        "hideThemeFooter" : false,
+        "showThemeFooterAtBottom" : true,
+        "stickyThemeHeader" : false
+      },
+      "children" : [ {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"bd2a6854-5819-4fc5-9e0c-75ca95cc7706\",\"columns\":[{\"UUID\":\"ebfa2dee-97a8-4e46-b58a-d8ad2c4c93c7\",\"columnName\":\"Column 1\",\"columnKey\":\"headerSection\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "id" : "ebfa2dee-97a8-4e46-b58a-d8ad2c4c93c7",
+            "name" : "headerSection",
+            "title" : "Theme Header",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "bd2a6854-5819-4fc5-9e0c-75ca95cc7706",
+          "type" : "component"
+        } ],
+        "id" : "84d08e50-6520-4d08-9c98-cfd103ad2836",
+        "name" : "header",
+        "title" : "Theme Header",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "dxpStyle" : {
+              "isVisible" : true
+            },
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"365c2545-7fdd-4c0e-998a-2d65eda5feb3\",\"columns\":[{\"UUID\":\"b8d2b41b-a112-4e87-8857-130c3ec1e4b1\",\"columnName\":\"Column 1\",\"columnKey\":\"footerSection\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "id" : "b8d2b41b-a112-4e87-8857-130c3ec1e4b1",
+            "name" : "footerSection",
+            "title" : "Theme Footer",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "365c2545-7fdd-4c0e-998a-2d65eda5feb3",
+          "type" : "component"
+        }, {
+          "attributes" : {
+            "clientVersion" : "WebV1",
+            "deploymentName" : "Electra_Car_Test_Drive",
+            "hideChatButtonOnLoad" : "Default",
+            "isExpSiteAuthMode" : false,
+            "scrtUrl" : "https://orgfarm-6742659fff.my.salesforce-scrt.com",
+            "siteEndpoint" : "https://orgfarm-6742659fff.my.site.com/ESWElectraCarTestDrive1776244647780"
+          },
+          "definition" : "experience_messaging:embeddedMessaging",
+          "id" : "223d8766-3a66-4385-a12b-f67d8814f21e",
+          "type" : "component"
+        } ],
+        "id" : "a9475dc4-c396-40e9-9379-34c8470f33e2",
+        "name" : "footer",
+        "title" : "Theme Footer",
+        "type" : "region"
+      } ],
+      "definition" : "community_byo:scopedHeaderAndFooter",
+      "id" : "897a52f6-c02f-4643-8525-89b9457653e7",
+      "type" : "component"
+    }
+  },
+  "urlName" : "scoped-header-and-footer"
+}

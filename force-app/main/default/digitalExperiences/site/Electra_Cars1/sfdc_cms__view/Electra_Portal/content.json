@@ -1,0 +1,53 @@
+{
+  "type" : "sfdc_cms__view",
+  "title" : "Electra Portal",
+  "contentBody" : {
+    "component" : {
+      "children" : [ {
+        "id" : "633b91dc-36d0-4490-8db1-e6c44e60d3de",
+        "name" : "header",
+        "title" : "header",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : { },
+          "definition" : "c:electraIndiaPortal",
+          "id" : "0c885df0-a37c-407a-bfb4-b17d63bcc12a",
+          "type" : "component"
+        } ],
+        "id" : "2359f0d7-d7ab-44a5-a184-7d49ab8c711c",
+        "name" : "content",
+        "title" : "content",
+        "type" : "region"
+      }, {
+        "id" : "75cbcf19-cf0e-494e-80f0-58bfdec0bb1a",
+        "name" : "footer",
+        "title" : "footer",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "customHeadTags" : "",
+            "description" : "",
+            "pageTitle" : "Electra Portal",
+            "recordId" : "{!recordId}"
+          },
+          "definition" : "community_builder:seoAssistant",
+          "id" : "74d350b9-a679-402a-ad17-4c773c759b42",
+          "type" : "component"
+        } ],
+        "id" : "9594e8b2-ed30-43a3-8075-e8674d1bd94b",
+        "name" : "sfdcHiddenRegion",
+        "title" : "sfdcHiddenRegion",
+        "type" : "region"
+      } ],
+      "definition" : "community_layout:sldsOneColLayout",
+      "id" : "e5c3d59d-0b04-4b21-8987-4f1ef128b397",
+      "type" : "component"
+    },
+    "dataProviders" : [ ],
+    "themeLayoutType" : "Inner",
+    "viewType" : "custom-electra-portal"
+  },
+  "urlName" : "electra-portal"
+}

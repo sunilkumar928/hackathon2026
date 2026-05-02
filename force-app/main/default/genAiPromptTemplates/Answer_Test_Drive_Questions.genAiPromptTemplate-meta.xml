@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This prompt grabs real-time Calculated Insights from Data Cloud  using an Apex grounding class and uses that data to answer customer test drive queries.</description>
+    <developerName>Answer_Test_Drive_Questions</developerName>
+    <masterLabel>Answer Test Drive Questions</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>You are a helpful AI assistant for booking test drives.
+The customer is asking the following question:
+{!$Input:User_Question}
+Ground your answer ONLY in the facts provided below. Look for requested metrics labeled within the insight tables (like Lead_Booking_Count__cio for count details).
+Customer Insights:
+{!$Apex:GroundCalculatedInsights.insightContent}
+  
+Rules:
+Keep your response short, precise, and polite.
+Do not make up facts or bring in external knowledge.
+If the answer is not present in the customer insights above, state that you do not have that information at this moment.
+
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>User_Question</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>User Question</masterLabel>
+            <referenceName>Input:User_Question</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <status>Draft</status>
+        <templateDataProviders>
+            <definition>apex://GroundCalculatedInsights</definition>
+            <label>Fetch Calculated Insights for Agent</label>
+            <referenceName>Apex:GroundCalculatedInsights</referenceName>
+        </templateDataProviders>
+        <templateDataProviders>
+            <definition>invocable://getEinsteinRetrieverResults/Test_Drive_Insights_Retriever_1Cx_uBR370a7c52</definition>
+            <label>Test Drive Insights Retriever</label>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>searchText</parameterName>
+                <valueExpression>{!$Input:User_Question}</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://List&lt;String&gt;</definition>
+                <isRequired>false</isRequired>
+                <parameterName>outputFieldNames</parameterName>
+                <valueExpression>[&quot;Test_Drive_Name&quot;,&quot;Test_Drive_Zip_Code&quot;,&quot;Dealership&quot;,&quot;First_Name&quot;,&quot;New_Vehicle_Name&quot;]</valueExpression>
+            </parameters>
+            <parameters>
+                <definition>primitive://Integer</definition>
+                <isRequired>false</isRequired>
+                <parameterName>resultCount</parameterName>
+                <valueExpression>5</valueExpression>
+            </parameters>
+            <referenceName>EinsteinSearch:Test_Drive_Insights_Retriever_1Cx_uBR370a7c52</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>whLLqV5u/QuwXNMotUO6WjJjqplinwUHJjhJJ6aqeho=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

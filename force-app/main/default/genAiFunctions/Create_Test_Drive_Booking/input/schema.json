@@ -1,0 +1,91 @@
+{
+  "required" : [ "agentSessionId", "email", "envelopeId", "firstName", "phone", "preferredChannel", "preferredDate", "timeSlot", "zipCode" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "agentSessionId" : {
+      "title" : "Agent Session Id",
+      "description" : "Messaging session Id",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "email" : {
+      "title" : "Email",
+      "description" : "Email",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "envelopeId" : {
+      "title" : "Envelope Id",
+      "description" : "DocuSign Envelope Id",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "firstName" : {
+      "title" : "First Name",
+      "description" : "First Name",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "lastName" : {
+      "title" : "Last Name",
+      "description" : "Last Name",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "notes" : {
+      "title" : "Notes",
+      "description" : "Notes",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "phone" : {
+      "title" : "Phone",
+      "description" : "Phone number",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "preferredChannel" : {
+      "title" : "Preferred Channel",
+      "description" : "Preferred Channel",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "preferredDate" : {
+      "title" : "Preferred Date",
+      "description" : "Preferred date",
+      "lightning:type" : "lightning__dateType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "showroomVehicleId" : {
+      "title" : "Showroom Vehicle Id",
+      "description" : "show room vehicle id",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "timeSlot" : {
+      "title" : "Time Slot",
+      "description" : "time slot",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "zipCode" : {
+      "title" : "Zip Code",
+      "description" : "zip code",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

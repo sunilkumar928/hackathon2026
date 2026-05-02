@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Data_Time__c</fullName>
+    <formula>DATETIMEVALUE(
+  TEXT( Preferred_Date_BS__c ) &amp; &quot; &quot; &amp; 
+  CASE( Preferred_Slot_BS__c ,
+    &quot;Morning (9-12)&quot;, &quot;09:00:00&quot;,
+    &quot;Afternoon (12-5)&quot;, &quot;12:00:00&quot;,
+    &quot;Evening (5-7)&quot;, &quot;17:00:00&quot;,
+    &quot;12:00:00&quot;
+  )
+) - (5.5 / 24)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Data/Time</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

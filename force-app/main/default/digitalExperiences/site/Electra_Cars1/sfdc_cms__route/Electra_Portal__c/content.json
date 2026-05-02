@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Electra Portal",
+  "contentBody" : {
+    "activeViewId" : "Electra_Portal",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-electra-portal",
+    "urlPrefix" : "electra-portal"
+  },
+  "urlName" : "electra-portal"
+}

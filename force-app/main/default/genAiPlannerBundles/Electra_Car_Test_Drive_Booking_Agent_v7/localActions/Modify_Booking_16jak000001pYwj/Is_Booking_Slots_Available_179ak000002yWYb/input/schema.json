@@ -1,0 +1,31 @@
+{
+  "required" : [ ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "ExistingTestDriveRecord" : {
+      "title" : "ExistingTestDriveRecord",
+      "description" : "Existing Test Drive Record",
+      "lightning:type" : "lightning__recordInfoType",
+      "lightning:sObjectInfo" : {
+        "apiName" : "TestDrive__c"
+      },
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "PreferredDate" : {
+      "title" : "PreferredDate",
+      "description" : "Preferred Date for the End user",
+      "lightning:type" : "lightning__dateType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "PreferredSlot" : {
+      "title" : "PreferredSlot",
+      "description" : "Preferred Slot for the End User",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

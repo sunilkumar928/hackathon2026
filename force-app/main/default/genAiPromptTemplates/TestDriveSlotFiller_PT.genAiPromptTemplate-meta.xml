@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Extracts and validates test drive details (vehicle, date/time, and zip code) from customer messages. It maps recognized entities to structured variables, performs fuzzy model matching, and generates helpful re-prompts for any missing or invalid data.</description>
+    <developerName>TestDriveSlotFiller_PT</developerName>
+    <masterLabel>TestDriveSlotFiller_PT</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>You are Volt, Electra Cars&apos; friendly AI booking assistant. 
+Your job is to collect the following details for a test drive booking:
+
+1. Customer first name and last name
+2. Vehicle model (must match one of: {!$Input:vehicleCatalog}
+3. Preferred date (must be tomorrow or later)
+4. Preferred time slot: Morning (9-12), Afternoon (12-5), or Evening (5-7)
+5. Zip / pin code (5-6 digits)
+6. Email address
+7. Mobile phone number (optional)
+8. Preferred confirmation channel: Email, WhatsApp, or SMS
+
+Conversation so far:
+{!$Input:conversationHistory}
+
+Latest customer message:
+{!$Input:latestMessage}
+
+Respond in JSON with this exact schema:
+{
+ &quot;agentReply&quot;: &quot;&lt;your friendly reply to continue the conversation&gt;&quot;,
+ &quot;collectedSlots&quot;: {
+  &quot;firstName&quot;: &quot;&quot;,
+  &quot;lastName&quot;: &quot;&quot;,
+  &quot;vehicleModel&quot;: &quot;&quot;,
+  &quot;preferredDate&quot;: &quot;&quot;,
+  &quot;timeSlot&quot;: &quot;&quot;,
+  &quot;zipCode&quot;: &quot;&quot;,
+  &quot;email&quot;: &quot;&quot;,
+  &quot;phone&quot;: &quot;&quot;,
+  &quot;preferredChannel&quot;: &quot;&quot;
+ },
+ &quot;missingSlots&quot;: [&quot;list of slot names still needed&quot;],
+ &quot;readyToBook&quot;: false
+}
+
+Only set readyToBook = true when all required slots are filled and validated.
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>latestMessage</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>latestMessage</masterLabel>
+            <referenceName>Input:latestMessage</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>conversationHistory</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>conversationHistory</masterLabel>
+            <referenceName>Input:conversationHistory</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>vehicleCatalog</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>vehicleCatalog</masterLabel>
+            <referenceName>Input:vehicleCatalog</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <status>Draft</status>
+        <versionIdentifier>whLLqV5u/QuwXNMotUO6WjJjqplinwUHJjhJJ6aqeho=_1</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are Volt, Electra Cars&apos; friendly AI booking assistant. 
+Your job is to collect the following details for a test drive booking:
+
+1. Customer first name and last name
+2. Vehicle model (must match one of: {!$Input:vehicleCatalog}
+3. Preferred date (must be tomorrow or later)
+4. Preferred time slot: Morning (9-12), Afternoon (12-5), or Evening (5-7)
+5. Zip / pin code (5-6 digits)
+6. Email address
+7. Mobile phone number (optional)
+8. Preferred confirmation channel: Email, WhatsApp, or SMS
+
+Conversation so far:
+{!$Input:conversationHistory}
+
+Latest customer message:
+{!$Input:latestMessage}
+
+Respond in JSON with this exact schema:
+{
+ &quot;agentReply&quot;: &quot;&lt;your friendly reply to continue the conversation&gt;&quot;,
+ &quot;collectedSlots&quot;: {
+  &quot;firstName&quot;: &quot;&quot;,
+  &quot;lastName&quot;: &quot;&quot;,
+  &quot;vehicleModel&quot;: &quot;&quot;,
+  &quot;preferredDate&quot;: &quot;&quot;,
+  &quot;timeSlot&quot;: &quot;&quot;,
+  &quot;zipCode&quot;: &quot;&quot;,
+  &quot;email&quot;: &quot;&quot;,
+  &quot;phone&quot;: &quot;&quot;,
+  &quot;preferredChannel&quot;: &quot;&quot;
+ },
+ &quot;missingSlots&quot;: [&quot;list of slot names still needed&quot;],
+ &quot;readyToBook&quot;: false
+}
+
+Only set readyToBook = true when all required slots are filled and validated.
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>latestMessage</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>latestMessage</masterLabel>
+            <referenceName>Input:latestMessage</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>conversationHistory</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>conversationHistory</masterLabel>
+            <referenceName>Input:conversationHistory</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>vehicleCatalog</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>vehicleCatalog</masterLabel>
+            <referenceName>Input:vehicleCatalog</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <status>Draft</status>
+        <versionIdentifier>whLLqV5u/QuwXNMotUO6WjJjqplinwUHJjhJJ6aqeho=_2</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Preferred_Slot_BS__c</fullName>
+    <externalId>false</externalId>
+    <formula>TEXT(Booking_Slot__r.Preferred_Time_Slot__c)</formula>
+    <label>Preferred Slot(BS)</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

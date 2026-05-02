@@ -1,0 +1,16 @@
+{
+  "type" : "sfdc_cms__trustedSites",
+  "title" : "trustedSites",
+  "contentBody" : {
+    "trustedSites" : [ {
+      "isActive" : true,
+      "source" : "https://cdn.c360a.salesforce.com",
+      "sourceName" : "DataCloud Website"
+    }, {
+      "isActive" : true,
+      "source" : "https://images.unsplash.com",
+      "sourceName" : "Image"
+    } ]
+  },
+  "urlName" : "trustedsites"
+}

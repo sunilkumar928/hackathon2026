@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Image_URL__c</fullName>
+    <description>Direct URL to vehicle image used in WhatsApp rich media confirmation card. Must be a publicly accessible HTTPS URL.</description>
+    <inlineHelpText>Direct URL to vehicle image used in WhatsApp rich media confirmation card.</inlineHelpText>
+    <label>Image URL</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Url</type>
+</CustomField>

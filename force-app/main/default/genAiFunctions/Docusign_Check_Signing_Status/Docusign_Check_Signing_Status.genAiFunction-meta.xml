@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Checks if the user has completed signing the envelope.</description>
+    <developerName>Docusign_Check_Signing_Status</developerName>
+    <invocationTarget>DocusignGetStatusInvocable</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+    <localDeveloperName>Docusign_Check_Signing_Status</localDeveloperName>
+    <masterLabel>Docusign: Check Signing Status</masterLabel>
+    <progressIndicatorMessage>Checking the signing status..</progressIndicatorMessage>
+</GenAiFunction>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DigitalExperienceConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>ESW_New_Electra_Embedded_S_1776432990158</label>
+    <site>
+        <urlPathPrefix>ESWNewElectraEmbeddedS1776432990158</urlPathPrefix>
+    </site>
+    <space>site/ESW_New_Electra_Embedded_S_17764329901581</space>
+</DigitalExperienceConfig>

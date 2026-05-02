@@ -1,0 +1,14 @@
+{
+  "required" : [ "zipCode" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "zipCode" : {
+      "title" : "Zip Code",
+      "description" : "Customer zip or pin code",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

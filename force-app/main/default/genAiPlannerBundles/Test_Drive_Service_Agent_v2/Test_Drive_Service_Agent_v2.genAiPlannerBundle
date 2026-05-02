@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>A conversational automotive assistant that engages customers on Web Chat and WhatsApp to collect test drive details and automate scheduling and routing.</description>
+    <localTopicLinks>
+        <genAiPluginName>Explore_Vehicles_16jak000001kzPh</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>ambiguous_question_16jak000001kzPh</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>escalation_16jak000001kzPh</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>off_topic_16jak000001kzPh</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>topic_selector_16jak000001kzPh</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>ambiguous_question_16jak000001kzPh</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant topics when user request is too ambiguous</description>
+        <developerName>ambiguous_question_16jak000001kzPh</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5Y4</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5Y4</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>ambiguous_question</localDeveloperName>
+        <masterLabel>Ambiguous Question</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>escalation_16jak000001kzPh</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Handles requests from users who want to transfer or escalate their conversation to a live human agent.</description>
+        <developerName>escalation_16jak000001kzPh</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5Y5</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5Y5</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>escalation</localDeveloperName>
+        <masterLabel>Escalation</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>Explore_Vehicles_16jak000001kzPh</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Search for and provide details about available vehicle models, their locations, and test drive status.</description>
+        <developerName>Explore_Vehicles_16jak000001kzPh</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5Y2</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5Y2</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Gets_Available_Vehicles_Information_179ak000002o5Y2</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Gets_Available_Vehicles_Information_179ak000002o5Y2</fullName>
+            <description>Queries the database for available vehicles based on model name.</description>
+            <developerName>Gets_Available_Vehicles_Information_179ak000002o5Y2</developerName>
+            <invocationTarget>Get_Available_Vehicles_Information</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Gets_Available_Vehicles_Information</localDeveloperName>
+            <masterLabel>Gets Available Vehicles Information</masterLabel>
+            <progressIndicatorMessage>Retriving vehicle information...</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>Explore_Vehicles</localDeveloperName>
+        <masterLabel>Explore Vehicles</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>off_topic_16jak000001kzPh</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant topics when user request goes off-topic</description>
+        <developerName>off_topic_16jak000001kzPh</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5Y3</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5Y3</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>off_topic</localDeveloperName>
+        <masterLabel>Off Topic</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>topic_selector_16jak000001kzPh</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the user and determine the appropriate topic based on user input</description>
+        <developerName>topic_selector_16jak000001kzPh</developerName>
+        <genAiPluginInstructions>
+            <description>You are an automotive assistant that collects test drive details, creates requests, routes to dealerships, and sends confirmations.</description>
+            <developerName>instruction0_179ak000002o5Y1</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179ak000002o5Y1</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>topic_selector</localDeveloperName>
+        <masterLabel>Topic Selector</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>Test Drive Service Agent</masterLabel>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>
